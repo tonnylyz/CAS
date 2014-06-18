@@ -1,0 +1,301 @@
+﻿body {
+	padding-top:50px;
+}
+a {
+    cursor:pointer;
+}
+/*PAGE LOADING*/
+#pageloading {
+    height:50px;
+    width:50px;
+    margin:25% 0 0 50%;
+}
+/*PAGE LOADING END*/
+
+/*CARD SPAN*/
+.cardspan {
+    text-align: center;
+    height: 120px;
+    padding: 5px;
+}
+.cardspan img {
+    height:60px;
+    width:60px;
+}
+.cardspan a {
+    display:block;
+    box-shadow: 0px 0px 2px rgba(1, 109, 175, 0.52) ;
+    padding: 5px;
+}
+.cardspan a:hover{
+    text-decoration:none;
+}
+
+/*PERSONAL TAB*/
+#TabContent .form-horizontal {
+    padding-top:20px;
+}
+
+/*LOGIN FRAME*/
+.form-signin {
+  max-width: 330px;
+  margin: 0 auto;
+}
+.form-signin .form-signin-heading,
+.form-signin .checkbox {
+  margin-bottom: 10px;
+}
+.form-signin .checkbox {
+  font-weight: normal;
+}
+.form-signin .form-control {
+  position: relative;
+  font-size: 16px;
+  height: auto;
+  padding: 10px;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+.form-signin input[type="text"] {
+  margin-bottom: -1px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+/*LOGIN FRAME END*/
+
+/*NAVICON*/
+#naviconbar a {
+    padding: 0 10px 0 0;
+	cursor:pointer;
+}
+
+
+#naviconbar a img {
+	width: 50px;
+	height: 50px;
+}
+
+/*NAVICON END*/
+
+/*MENU LIST*/
+.bs-sidebar .nav > li > a {
+  display: block;
+  color: #716b7a;
+  padding: 5px 20px;
+}
+.bs-sidebar .nav > li > a:hover,
+.bs-sidebar .nav > li > a:focus {
+  text-decoration: none;
+  background-color: #e6e6e6;
+  border-left: 1px solid #f0f0f0;
+}
+.bs-sidebar .nav > .active > a,
+.bs-sidebar .nav > .active:hover > a,
+.bs-sidebar .nav > .active:focus > a {
+  font-weight: bold;
+  color: #428BCA;
+  background-color: transparent;
+  border-left: 1px solid #428BCA;
+}
+.bs-sidebar .nav .nav {
+  margin-bottom: 8px;
+}
+.bs-sidebar .nav .nav > li {
+  padding-left: 30px;
+  font-size: 90%;
+}
+/*MENU LIST END*/
+
+/*HOMEWORKSPAN & FILESPAN*/
+#homeworkspan, #filespan {
+    overflow-y:auto;
+    height:220px;
+}
+/*HOMEWORKSPAN & FILESPAN END*/
+
+/*FRAME*/
+#loginframe,#talkframe,#userframe {
+    top: 45px;
+    margin-left: -300px;
+    width: 276px;
+    left: 100%;
+    position: fixed;
+}
+/*FRAME END*/
+
+/*SCROLLUP*/
+#scrollUp{bottom:20px;right:20px;height:38px;width:38px;background:url("../img/top.png") no-repeat}
+
+/*PERSONAL CARD*/
+#userinfobox .btn {
+	height:102px;
+	padding: 40px 11px 10px;
+}
+#userinfobox {
+    margin: 10px;
+}
+
+#userheadbox>img {
+	margin-top:-30px;
+    width:80px!important;
+    height:80px!important;
+}
+/*PERSONAL AVATAR*/
+#preview-pane {
+    display:block;
+    top: 10px;
+    padding: 6px;
+    border: 1px rgba(0,0,0,.4) solid;
+    background-color: white;
+    border-radius: 6px;
+    box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
+    float: right;
+    margin-right: -200px;
+}
+
+#preview-pane .preview-container {
+    width: 150px;
+    height: 150px;
+    overflow: hidden;
+}
+
+/*IO MODAL BUTTON*/
+#iomodalbt {
+    margin-top:-40px
+}
+
+@media (max-width: 992px) {
+    #homeworkspan, #filespan {
+        overflow-y:visible;
+        height:auto;
+    }
+}
+
+/*GALLERY*/
+#galleryul .mix{
+	display: none;
+}
+#galleryul .mix a{
+	text-decoration:none;
+    text-align:center;
+}
+
+#filethumb {
+	width:800px;
+}
+
+/*TALK*/
+
+.talkoptitlerd {
+    color: #7A7A7A;
+    margin-top: 8px;
+    font-size: 14px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    float: right;
+}
+
+    .talkoptitlerd a {
+        cursor: pointer;
+    }
+
+.talkcard {
+    width: 260px;
+    box-shadow: 0 0 3px #CCC;
+    background-color: #F9F9F9;
+    margin-top: 35px;
+    margin-bottom: 5px;
+}
+
+.talkop {
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: #E3E3E3;
+    height: 35px;
+}
+
+.talkoptitle {
+    color: #7A7A7A;
+    margin-top: 8px;
+    font-size: 14px;
+    margin-left: 8px;
+    margin-bottom: 8px;
+    float: left;
+}
+
+.talkcardhead {
+    background-color: #FFF;
+    height: 40px;
+    width: 40px;
+    float: left;
+    margin-top: -25px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    margin-left: 5px;
+    box-shadow: 0 0 3px #ccc;
+}
+
+.talkcardinfo {
+    float: left;
+    width: 210px;
+    margin-top: -33px;
+    margin-left: -5px;
+}
+
+.talkcardtime {
+    font-size: 10px;
+    color: #7A7A7A;
+}
+
+.talkcardcontent {
+    clear: both;
+    text-indent: 2em;
+    padding: 10px;
+    color: #313131;
+    background-repeat: no-repeat;
+    font-size: 13px;
+}
+
+#talkcontent {
+    min-height: 40px;
+    margin-left: -5px;
+}
+
+
+@media (max-width: 766px) {
+	#Carousel {
+		display:none;
+	}
+	
+    #filethumb {
+		width:auto;
+		margin-left: 0;
+	}
+
+	#naviconbar {
+		margin-top:-60px;
+		margin-bottom:60px;
+	}
+
+    #loginframe, #userframe, #talkframe {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        margin-top: -98px;
+        margin-left: -138px;
+    }
+
+	.navbar-right .navbar-nav{
+		margin:0;
+		float:right;
+	}
+}
