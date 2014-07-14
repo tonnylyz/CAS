@@ -5,7 +5,7 @@ A system for classes in middle school
 
 SQL Server initial code
 
-<code>
+<pre>
 USE [master]
 GO
 /****** Object:  Database [CAS]    Script Date: 2014/7/14 15:16:08 ******/
@@ -394,4 +394,4 @@ USE [master]
 GO
 ALTER DATABASE [CAS] SET  READ_WRITE 
 GO
-</code>
+</pre>
