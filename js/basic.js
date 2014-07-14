@@ -675,7 +675,7 @@ $(function () {
         animation: 'fade',
         scrollText: '',
         scrollImg: true, 
-        zIndex: 2147483647
+        zIndex: 10
     });
 
     $('#talkform').submit(function (e) {
