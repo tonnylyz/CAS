@@ -1,14 +1,15 @@
 ﻿body {
-	padding-top:50px;
+    padding-top: 50px;
 }
+
 a {
-    cursor:pointer;
+    cursor: pointer;
 }
 /*PAGE LOADING*/
 #pageloading {
-    height:50px;
-    width:50px;
-    margin:25% 0 0 50%;
+    height: 50px;
+    width: 50px;
+    margin: 25% 0 0 50%;
 }
 /*PAGE LOADING END*/
 
@@ -18,112 +19,82 @@ a {
     height: 120px;
     padding: 5px;
 }
-.cardspan img {
-    height:60px;
-    width:60px;
-}
-.cardspan a {
-    display:block;
-    box-shadow: 0px 0px 2px rgba(1, 109, 175, 0.52) ;
-    padding: 5px;
-}
-.cardspan a:hover{
-    text-decoration:none;
-}
+
+    .cardspan img {
+        height: 60px;
+        width: 60px;
+    }
+
+    .cardspan a {
+        display: block;
+        box-shadow: 0px 0px 2px rgba(1, 109, 175, 0.52);
+        padding: 5px;
+    }
+
+        .cardspan a:hover {
+            text-decoration: none;
+        }
 
 /*PERSONAL TAB*/
 #TabContent .form-horizontal {
-    padding-top:20px;
+    padding-top: 20px;
 }
-
-/*LOGIN FRAME*/
-.form-signin {
-  max-width: 330px;
-  margin: 0 auto;
-}
-.form-signin .form-signin-heading,
-.form-signin .checkbox {
-  margin-bottom: 10px;
-}
-.form-signin .checkbox {
-  font-weight: normal;
-}
-.form-signin .form-control {
-  position: relative;
-  font-size: 16px;
-  height: auto;
-  padding: 10px;
-  -webkit-box-sizing: border-box;
-     -moz-box-sizing: border-box;
-          box-sizing: border-box;
-}
-.form-signin .form-control:focus {
-  z-index: 2;
-}
-.form-signin input[type="text"] {
-  margin-bottom: -1px;
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-}
-.form-signin input[type="password"] {
-  margin-bottom: 10px;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-}
-/*LOGIN FRAME END*/
 
 /*NAVICON*/
 #naviconbar a {
     padding: 0 10px 0 0;
-	cursor:pointer;
+    cursor: pointer;
 }
 
-
-#naviconbar a img {
-	width: 50px;
-	height: 50px;
-}
+    #naviconbar a img {
+        width: 50px;
+        height: 50px;
+    }
 
 /*NAVICON END*/
 
 /*MENU LIST*/
 .bs-sidebar .nav > li > a {
-  display: block;
-  color: #716b7a;
-  padding: 5px 20px;
+    display: block;
+    color: #716b7a;
+    padding: 5px 20px;
 }
-.bs-sidebar .nav > li > a:hover,
-.bs-sidebar .nav > li > a:focus {
-  text-decoration: none;
-  background-color: #e6e6e6;
-  border-left: 1px solid #f0f0f0;
-}
+
+    .bs-sidebar .nav > li > a:hover,
+    .bs-sidebar .nav > li > a:focus {
+        text-decoration: none;
+        background-color: #e6e6e6;
+        border-left: 1px solid #f0f0f0;
+    }
+
 .bs-sidebar .nav > .active > a,
 .bs-sidebar .nav > .active:hover > a,
 .bs-sidebar .nav > .active:focus > a {
-  font-weight: bold;
-  color: #428BCA;
-  background-color: transparent;
-  border-left: 1px solid #428BCA;
+    font-weight: bold;
+    color: #428BCA;
+    background-color: transparent;
+    border-left: 1px solid #428BCA;
 }
+
 .bs-sidebar .nav .nav {
-  margin-bottom: 8px;
+    margin-bottom: 8px;
 }
-.bs-sidebar .nav .nav > li {
-  padding-left: 30px;
-  font-size: 90%;
-}
+
+    .bs-sidebar .nav .nav > li {
+        padding-left: 30px;
+        font-size: 90%;
+    }
 /*MENU LIST END*/
 
 /*HOMEWORKSPAN & FILESPAN*/
 #homeworkspan, #filespan {
-    overflow-y:auto;
-    height:220px;
+    overflow-y: auto;
+    height: 220px;
 }
 /*HOMEWORKSPAN & FILESPAN END*/
 
 /*FRAME*/
-#loginframe,#talkframe,#userframe {
+#talkframe, #userframe {
     top: 45px;
     margin-left: -300px;
     width: 276px;
@@ -133,25 +104,32 @@ a {
 /*FRAME END*/
 
 /*SCROLLUP*/
-#scrollUp{bottom:20px;right:20px;height:38px;width:38px;background:url("../img/top.png") no-repeat}
+#scrollUp {
+    bottom: 20px;
+    right: 20px;
+    height: 38px;
+    width: 38px;
+    background: url("../img/top.png") no-repeat;
+}
 
 /*PERSONAL CARD*/
 #userinfobox .btn {
-	height:102px;
-	padding: 40px 11px 10px;
+    height: 102px;
+    padding: 40px 11px 10px;
 }
+
 #userinfobox {
     margin: 10px;
 }
 
-#userheadbox>img {
-	margin-top:-30px;
-    width:80px!important;
-    height:80px!important;
+#userheadbox > img {
+    margin-top: -30px;
+    width: 80px !important;
+    height: 80px !important;
 }
 /*PERSONAL AVATAR*/
 #preview-pane {
-    display:block;
+    display: block;
     top: 10px;
     padding: 6px;
     border: 1px rgba(0,0,0,.4) solid;
@@ -162,35 +140,37 @@ a {
     margin-right: -200px;
 }
 
-#preview-pane .preview-container {
-    width: 150px;
-    height: 150px;
-    overflow: hidden;
-}
+    #preview-pane .preview-container {
+        width: 150px;
+        height: 150px;
+        overflow: hidden;
+    }
 
 /*IO MODAL BUTTON*/
 #iomodalbt {
-    margin-top:-40px
+    margin-top: -40px;
 }
 
 @media (max-width: 992px) {
     #homeworkspan, #filespan {
-        overflow-y:visible;
-        height:auto;
+        overflow-y: visible;
+        height: auto;
     }
 }
 
 /*GALLERY*/
-#galleryul .mix{
-	display: none;
-}
-#galleryul .mix a{
-	text-decoration:none;
-    text-align:center;
+#galleryul .mix {
+    display: none;
 }
 
+    #galleryul .mix a {
+        text-decoration: none;
+        text-align: center;
+    }
+
+/*FILE*/
 #filethumb {
-	width:800px;
+    width: 800px;
 }
 
 /*TALK*/
@@ -272,21 +252,21 @@ a {
 
 
 @media (max-width: 766px) {
-	#Carousel {
-		display:none;
-	}
-	
+    #Carousel {
+        display: none;
+    }
+
     #filethumb {
-		width:auto;
-		margin-left: 0;
-	}
+        width: auto;
+        margin-left: 0;
+    }
 
-	#naviconbar {
-		margin-top:-60px;
-		margin-bottom:60px;
-	}
+    #naviconbar {
+        margin-top: -60px;
+        margin-bottom: 60px;
+    }
 
-    #loginframe, #userframe, #talkframe {
+    #userframe, #talkframe {
         position: fixed;
         top: 50%;
         left: 50%;
@@ -294,8 +274,8 @@ a {
         margin-left: -138px;
     }
 
-	.navbar-right .navbar-nav{
-		margin:0;
-		float:right;
-	}
+    .navbar-right .navbar-nav {
+        margin: 0;
+        float: right;
+    }
 }

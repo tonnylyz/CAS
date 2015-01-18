@@ -1,38 +1,30 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="MasterPage.master" Title="十三班 - CAS" CodeFile="Bulletin.aspx.cs" Inherits="Bulletin" %>
 <asp:Content ID="script" ContentPlaceHolderID="script" Runat="Server" >
     <script src="js/tinymce/tinymce.min.js"></script>
-    <script>
-        global_script("bulletin");
-        function global_onlogout() {
-            $("#iomodalbt").fadeOut("fast");
-        }
-        function global_onlogin() {
-            if (global_permission[4] == "1") {
-                $("#iomodalbt").fadeIn("fast");
-            }
-        }
-    </script>
+    <script>Script("bulletin");</script>
 </asp:content>
 
 <asp:Content ID="main" ContentPlaceHolderID="main" Runat="Server">
 	<div class="container">
         <div class="page-header">
             <h1>班级 <small>公告/通知</small></h1>
-            <button id="iomodalbt" data-toggle="modal" data-target="#iomodal" class="pull-right btn-primary btn" style="display:none">发布公告</button>
+            <%if (Session["per"].ToString().Split(',')[4] == "1") {%>
+            <button id="iomodalbt" data-toggle="modal" data-target="#iomodal" class="pull-right btn-primary btn">发布公告</button>
+            <%} %>
         </div>
     </div>
     <div class="container" style="min-height: 450px;">
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-sm-3">
 				<div class="bs-sidebar">
                     <ul class="nav bs-sidenav" id="bultlist">
 					    <%=onpage[0]%>
                     </ul>
 				</div>
             </div>
-            <div class="col-md-9" id="bulletinboard">
+            <div class="col-sm-9" id="bulletinboard">
                 <div id="ntb">
-                    <%if (onpage[1] != "null")
+                    <%if (onpage[1] != null)
                           Response.Write("<div class='page-header'><h1>" + onpage[1] + "</h1></div><div>" + onpage[2] + "</div>");
                     %>
                 </div>

@@ -1,14 +1,6 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="MasterPage.master" Title="十三班 - CAS" CodeFile="Filelib.aspx.cs" Inherits="Filelib" %>
 <asp:Content ID="script" ContentPlaceHolderID="script" Runat="Server" >
-    <script>
-        global_script("filelib");
-        function global_onlogin() {
-
-        }
-        function global_onlogout() {
-
-        }
-    </script>
+    <script>Script("filelib");</script>
 </asp:content>
 
 <asp:Content ID="main" ContentPlaceHolderID="main" Runat="Server">
@@ -19,7 +11,7 @@
     </div>
     <div class="container">
         <div class="row">
-        	<div class="col-md-4">
+        	<div class="col-sm-4">
             	<h3>文档日期</h3>
                 <div class="bs-sidebar">
                     <ul class="nav bs-sidenav" id="datelist">
@@ -27,7 +19,7 @@
                     </ul>
                 </div>
             </div>
-        	<div class="col-md-4">
+        	<div class="col-sm-4">
             	<h3>文档</h3>
                 <div class="bs-sidebar">
                     <ul id="filelist" class="nav bs-sidenav">
@@ -35,7 +27,7 @@
                     </ul>
                 </div>
             </div>
-        	<div class="col-md-4" id="infospan" style="display:none">
+        	<div class="col-sm-4" id="infospan" style="display:none">
             	<h3>文档信息</h3>
                 <h4 id="filename"></h4>
                	<div class="btn-group">

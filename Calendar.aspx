@@ -1,23 +1,23 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="MasterPage.master" Title="十三班 - CAS" CodeFile="Calendar.aspx.cs" Inherits="Calendar" %>
 <asp:Content ID="script" ContentPlaceHolderID="script" Runat="Server" >
-    <script src="js/fullcalendar.js"></script>
     <script src="js/bootstrap-datetimepicker.min.js"></script>
-    <script src="js/bootstrap-switch.min.js"></script>
     <link href="css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+
+    <script src="js/bootstrap-switch.min.js"></script>
     <link href="css/bootstrap-switch.min.css" rel="stylesheet" />
-    <link href="css/fullcalendar.css" rel="stylesheet">
+    
+    <script src="js/moment.js"></script>
+    <script src="js/fullcalendar.min.js"></script>
+    <link href="css/fullcalendar.min.css" rel="stylesheet">
+
     <script>
-        global_script("calendar");
-        function global_onlogout() {
-            $("#iomodalbt").fadeOut("fast");
-        }
-        function global_onlogin() {
-            if (global_permission[3] == "1") {
-                $("#iomodalbt").fadeIn("fast");
-            }
-        }
+        Script("calendar");
         $(function () {
-            $('#calendar').fullCalendar({ editable: false, events: [<%=eventback + birthback%>] });
+            $('#calendar').fullCalendar({
+                contentHeight: window.innerHeight - 100,
+                editable: false,
+                events: '/ajax.ashx?action=getcalendar'
+            });
         });
     </script>
 </asp:content>

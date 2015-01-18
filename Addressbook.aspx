@@ -1,16 +1,6 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="MasterPage.master" Title="十三班 - CAS" CodeFile="Addressbook.aspx.cs" Inherits="Addressbook" %>
 <asp:Content ID="script" ContentPlaceHolderID="script" Runat="Server" >
-	<script>
-	    global_script("addressbook");
-	    function global_onlogout() {
-	        $("#cardcont").html('');
-	        $('.alert').fadeIn();
-	    }
-	    function global_onlogin() {
-	        $('.alert').fadeOut();
-	        addressbook_getinfo();
-	    }
-	</script>
+	<script>Script("addressbook");</script>
 </asp:content>
 
 <asp:Content ID="main" ContentPlaceHolderID="main" Runat="Server">
@@ -20,9 +10,6 @@
         </div>
     </div>
     <div class="container">
-        <div class="alert alert-warning" style="<%if (Session["username"] != null) { Response.Write("display:none"); }%>">
-            您需要登录以查看这部分内容。请点击左上方或折叠菜单中登录按钮登录。
-        </div>
         <div class="row" id="cardcont">
         </div>
     </div>

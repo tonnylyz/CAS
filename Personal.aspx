@@ -1,14 +1,6 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="MasterPage.master" Title="十三班 - CAS"  CodeFile="Personal.aspx.cs" Inherits="Personal" %>
 <asp:Content ID="script" ContentPlaceHolderID="script" Runat="Server" >
-    <script>
-        global_script("personal");
-        function global_onlogout() {
-            window.location.reload();
-        }
-        function global_onlogin() {
-            window.location.reload();
-        }
-    </script>
+    <script>Script("personal");</script>
     <script src="js/jquery.Jcrop.min.js"></script>
 	<link href="css/jquery.Jcrop.min.css" rel="stylesheet" />
 </asp:content>

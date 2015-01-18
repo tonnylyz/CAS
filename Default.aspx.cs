@@ -9,92 +9,84 @@ using System.Web.UI.WebControls;
 
 public partial class _Default : System.Web.UI.Page
 {
-	public string Gethomework(string subject, DateTime dt)
+	public string getHomework(int subject, DateTime dt)
     {
         string back = "";
-        if (Convert.ToInt32(CAS.sql_execute("SELECT COUNT(*) FROM CAS_Homework WHERE date ='" + dt.ToShortDateString() + "' AND subject ='" + subject + "'")) != 0)
+        if (Convert.ToInt32(CAS.sqlExecute("SELECT COUNT(*) FROM CAS_Homework WHERE [date] ='" + CAS.dateToString(dt) + "' AND [subject] =" + subject + " AND [classnum] = '" + Session["classnum"].ToString() + "'")) != 0)
         {
-            switch (subject)
-            {
-                case "chi": back = "<li>语文<ul class='nav'>"; break;
-                case "mat": back = "<li>数学<ul class='nav'>"; break;
-                case "eng": back = "<li>英语<ul class='nav'>"; break;
-                case "phy": back = "<li>物理<ul class='nav'>"; break;
-                case "che": back = "<li>化学<ul class='nav'>"; break;
-                case "bio": back = "<li>生物<ul class='nav'>"; break;
-                case "pol": back = "<li>政治<ul class='nav'>"; break;
-                case "his": back = "<li>历史<ul class='nav'>"; break;
-                case "geo": back = "<li>地理<ul class='nav'>"; break;
-            }
-            string cmd = "SELECT * FROM CAS_Homework WHERE date = '" + dt.ToShortDateString() + "' AND subject ='" + subject + "'";
-            SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sql_connstr);
+            back = "<li>" + CAS.subject[subject] + "<ul class='nav'>";
+            string cmd = "SELECT * FROM CAS_Homework WHERE [date] = '" + CAS.dateToString(dt) + "' AND [subject] =" + subject + " AND [classnum] = '" + Session["classnum"].ToString() + "'";
+            SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sqlConnStr);
             DataSet ds = new DataSet();
             da.Fill(ds);
             for (var i = 0; i < ds.Tables[0].Rows.Count; i++)
             {
-                back = back + "<li>" + ds.Tables[0].Rows[i]["info"].ToString() + "</li>";
+                back += "<li>" + ds.Tables[0].Rows[i]["info"].ToString() + "</li>";
+            }
+            back += "</ul><li>";
+        }
+        return back;
+    }
+
+    public string getFile(int subject, DateTime dt)
+    {
+        string back = "";
+        if (Convert.ToInt32(CAS.sqlExecute("SELECT COUNT(*) FROM CAS_File WHERE [date] ='" + CAS.dateToString(dt) + "' AND [subject] =" + subject + " AND [classnum] = '" + Session["classnum"].ToString() + "'")) != 0)
+        {
+            back = "<li>" + CAS.subject[subject] + "<ul class='nav'>";
+            string cmd = "SELECT * FROM CAS_File WHERE [date] = '" + CAS.dateToString(dt) + "' AND [subject] =" + subject + " AND [classnum] = '" + Session["classnum"].ToString() + "'";
+            SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sqlConnStr);
+            DataSet ds = new DataSet();
+            da.Fill(ds);
+            for (var i = 0; i < ds.Tables[0].Rows.Count; i++)
+            {
+                back = back + "<li><a href=\"ajax.ashx?action=getfile&file=" + ds.Tables[0].Rows[i]["GUID"].ToString() + "\">" + ds.Tables[0].Rows[i]["filename"].ToString() + "</a></li>";
             }
             back = back + "</ul><li>";
         }
         return back;
     }
 
-    public string Getfilelist(string subject, DateTime dt)
-    {
-        string back = "";
-        if (Convert.ToInt32(CAS.sql_execute("SELECT COUNT(*) FROM CAS_File WHERE date ='" + dt.ToShortDateString() + "' AND subject ='" + subject + "'")) != 0)
-        {
-
-            back = "<li>"+subject+"<ul class='nav'>";
-            string cmd = "SELECT * FROM CAS_File WHERE date = '" + dt.ToShortDateString() + "' AND subject ='" + subject + "'";
-            SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sql_connstr);
-            DataSet ds = new DataSet();
-            da.Fill(ds);
-            for (var i = 0; i < ds.Tables[0].Rows.Count; i++)
-            {
-                back = back + "<li><a href=\"ajax.ashx?action=getfile&file=" + ds.Tables[0].Rows[i]["path"].ToString() + "\">" + ds.Tables[0].Rows[i]["filename"].ToString() + "</a></li>";
-            }
-            back = back + "</ul><li>";
-        }
+	public string getFileList()
+	{
+        string back = "<ul class='nav bs-sidenav'>";
+        DateTime dt;
+        if (DateTime.TryParse(CAS.sqlExecute("SELECT TOP 1 [date] FROM CAS_File WHERE [classnum] = '" + Session["classnum"].ToString() + "' ORDER BY [date] DESC"), out dt)) 
+            for (int sub = 0; sub < 9; sub++)
+                back += getFile(sub, dt);
+        else
+            back += "<li>暂无</li>";
+        back += "</ul>";
         return back;
-    }
-
-	public string getfilelist()
+	}
+	
+	public string getHomeworkList()
 	{
         string back = "<ul class='nav bs-sidenav'>";
-        DateTime dt = Convert.ToDateTime(CAS.sql_execute("select date from CAS_File ORDER BY ID desc"));
-		string[] subject = new string[] { "语文", "数学", "英语", "物理", "化学", "生物", "政治", "历史", "地理" };
-		foreach (string sub in subject)
-		{
-			back = back + Getfilelist(sub, dt);
-		}
-        back = back + "</ul>";
+        DateTime dt;
+        if (DateTime.TryParse(CAS.sqlExecute("SELECT TOP 1 [date] FROM CAS_Homework WHERE [classnum] = '" + Session["classnum"].ToString() + "' ORDER BY [date] DESC"), out dt))
+            for (int sub = 0; sub < 9; sub++)
+                back += getHomework(sub, dt);
+        else
+            back += "<li>暂无</li>";
+        back += "</ul>";
 		return back;
 	}
 	
-	public string gethomeworklist()
-	{
-        string back = "<ul class='nav bs-sidenav'>";
-        DateTime dt = Convert.ToDateTime(CAS.sql_execute("select date from CAS_Homework ORDER BY ID desc"));
-		string[] subject = new string[] { "chi", "mat", "eng", "phy", "che", "bio", "pol", "his", "geo" };
-		foreach (string sub in subject)
-		{
-			back = back + Gethomework(sub, dt);
-        }
-        back = back + "</ul>";
-		return back;
-	}
-	
-	public string getnoticelist()
+	public string getNoticeList()
 	{
 		string back = "<ul class='nav bs-sidenav'>";
-		string cmd = "SELECT TOP 7 * FROM CAS_Notice ORDER BY ID DESC";
-		SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sql_connstr);
+		string cmd;
+        if (Convert.ToInt32(CAS.sqlExecute("SELECT COUNT(*) FROM CAS_Notice WHERE [classnum] = '" + Session["classnum"].ToString() + "'")) >= 7)
+            cmd = "SELECT TOP 7 * FROM CAS_Notice WHERE [classnum] = '" + Session["classnum"].ToString() + "' ORDER BY [date] DESC";
+        else
+            cmd = "SELECT * FROM CAS_Notice WHERE [classnum] = '" + Session["classnum"].ToString() + "' ORDER BY [date] DESC";
+		SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sqlConnStr);
 		DataSet ds = new DataSet();
 		da.Fill(ds);
 		for (var i = 0; i < ds.Tables[0].Rows.Count; i++)
 		{
-			back = back + "<li><a href='Bulletin.aspx?ID=" + ds.Tables[0].Rows[i]["ID"].ToString() + "'>" + ds.Tables[0].Rows[i]["title"].ToString() + "</a></li>";
+			back = back + "<li><a href='Bulletin.aspx?ID=" + ds.Tables[0].Rows[i]["GUID"].ToString() + "'>" + ds.Tables[0].Rows[i]["title"].ToString() + "</a></li>";
 		}
         back = back + "</ul>";
 		return back;
@@ -103,10 +95,17 @@ public partial class _Default : System.Web.UI.Page
 	public string[] onpage = new string[5];
     protected void Page_Load(object sender, EventArgs e)
     {
-		onpage[0] = getnoticelist();
-		onpage[1] = gethomeworklist();
-		onpage[2] = getfilelist();
-		onpage[3] = Convert.ToDateTime(CAS.sql_execute("select date from CAS_Homework ORDER BY ID desc")).ToShortDateString();
-		onpage[4] = Convert.ToDateTime(CAS.sql_execute("select date from CAS_File ORDER BY ID desc")).ToShortDateString();
+		onpage[0] = getNoticeList();
+		onpage[1] = getHomeworkList();
+		onpage[2] = getFileList();
+        DateTime dt;
+        if (DateTime.TryParse(CAS.sqlExecute("SELECT TOP 1 [date] FROM CAS_Homework WHERE [classnum] = '" + Session["classnum"].ToString() + "' ORDER BY [date] DESC"), out dt))
+            onpage[3] = dt.ToShortDateString();
+        else
+            onpage[3] += "";
+        if (DateTime.TryParse(CAS.sqlExecute("SELECT TOP 1 [date] FROM CAS_File WHERE [classnum] = '" + Session["classnum"].ToString() + "' ORDER BY [date] DESC"), out dt))
+            onpage[4] = dt.ToShortDateString();
+        else
+            onpage[4] += "";
     }
 }

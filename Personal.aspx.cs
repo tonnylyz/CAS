@@ -19,6 +19,10 @@ public partial class Personal : System.Web.UI.Page
     public string page_script = "";
     protected void Page_Load(object sender, EventArgs e)
     {
+        if (Session["UUID"] == null)
+        {
+            Response.Redirect("Login.aspx");
+        }
         loadinfo();
     }
 
@@ -30,7 +34,7 @@ public partial class Personal : System.Web.UI.Page
             string mailinfo = "";
             string phoneinfo = "";
             string birthdayinfo = "";
-            SqlConnection conn = new SqlConnection(CAS.sql_connstr);
+            SqlConnection conn = new SqlConnection(CAS.sqlConnStr);
             SqlCommand cmd = new SqlCommand("SELECT * FROM CAS_User Where UUID='" + Session["UUID"].ToString() + "'", conn);
             conn.Open();
             SqlDataReader dr = cmd.ExecuteReader();
@@ -103,7 +107,7 @@ public partial class Personal : System.Web.UI.Page
         }
         else
         {
-            SqlConnection conn = new SqlConnection(CAS.sql_connstr);
+            SqlConnection conn = new SqlConnection(CAS.sqlConnStr);
             SqlCommand cmd = new SqlCommand("SELECT pwd FROM CAS_User WHERE username ='" + Session["username"] + "'", conn);
             conn.Open();
             string oldpwd = cmd.ExecuteScalar().ToString();
@@ -112,7 +116,7 @@ public partial class Personal : System.Web.UI.Page
             {
                 if (newpwd.Text == rnpwd.Text)
                 {
-                    SqlConnection conn2 = new SqlConnection(CAS.sql_connstr);
+                    SqlConnection conn2 = new SqlConnection(CAS.sqlConnStr);
                     SqlCommand cmd2 = new SqlCommand("Update CAS_User SET pwd = @pwd where username = '" + Session["username"] + "'", conn2);
                     SqlParameter para1 = new SqlParameter("@pwd", SqlDbType.NVarChar, 30);
                     para1.Value = Encrypt(rnpwd.Text);
@@ -138,7 +142,7 @@ public partial class Personal : System.Web.UI.Page
     {
         try
         {
-            SqlConnection conn2 = new SqlConnection(CAS.sql_connstr);
+            SqlConnection conn2 = new SqlConnection(CAS.sqlConnStr);
             SqlCommand cmd2 = new SqlCommand("Update CAS_User SET QQ = @QQ, mail = @mail, phone = @phone, birthday = @birthday where username = '" + Session["username"].ToString() + "'", conn2);
             SqlParameter para1 = new SqlParameter("@QQ", SqlDbType.NVarChar, 50);
             para1.Value = QQ.Text;

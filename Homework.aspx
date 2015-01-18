@@ -1,16 +1,6 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="MasterPage.master" Title="十三班 - CAS"  CodeFile="Homework.aspx.cs" Inherits="Homework" %>
 <asp:Content ID="script" ContentPlaceHolderID="script" Runat="Server" >
-    <script>
-        global_script("homework");
-        function global_onlogout() {
-            $("#iomodalbt").fadeOut("fast");
-        }
-        function global_onlogin() {
-            if (global_permission[6] != "0") {
-                $("#iomodalbt").fadeIn("fast");
-            }
-        }
-    </script>
+    <script>Script("homework");</script>
 </asp:content>
 
 <asp:Content ID="main" ContentPlaceHolderID="main" Runat="Server">
@@ -22,7 +12,7 @@
     </div>
         <div class="container">
         <div class="row">
-        	<div class="col-md-4">
+        	<div class="col-sm-4">
             	<h3>作业日期</h3>
                 <div class="bs-sidebar">
                     <ul class="nav bs-sidenav" id="filedate">
@@ -30,7 +20,7 @@
                     </ul>
                 </div>
             </div>
-        	<div class="col-md-8">
+        	<div class="col-sm-8">
             	<h3>作业</h3>
                 <div class="bs-sidebar">
                     <ul class="nav bs-sidenav" id="filelist">

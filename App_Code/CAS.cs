@@ -8,17 +8,19 @@ using System.Text;
 
 public class CAS
 {
+
 	public CAS()
 	{
 
 	}
+    public static string[] subject = new string[9] {"语文", "数学", "英语", "物理", "化学", "生物", "政治", "历史", "地理" };
 
-    public static string sql_connstr = System.Configuration.ConfigurationManager.ConnectionStrings["ConnectionString"].ToString();
+    public static string sqlConnStr = System.Configuration.ConfigurationManager.ConnectionStrings["ConnectionString"].ToString();
 
-    public static string sql_execute(string command)
+    public static string sqlExecute(string command)
     {
         object back = null;
-        SqlConnection conn = new SqlConnection(sql_connstr);
+        SqlConnection conn = new SqlConnection(sqlConnStr);
         SqlCommand cmd = new SqlCommand(command, conn);
         try
         {
@@ -37,6 +39,48 @@ public class CAS
             return back.ToString();
         else
             return "";
+    }
+    public static string dateToString(DateTime dt)
+    {
+        string date = dt.Year + "-" + dt.Month + "-" + dt.Day;
+        return date;
+    }
+    public static string sqlAdapter(string cmd, string[] key)
+    {
+        //Return a JSON in string
+        string back = "[";
+        SqlDataAdapter da = new SqlDataAdapter(cmd, sqlConnStr);
+        DataSet ds = new DataSet();
+        da.Fill(ds);
+        for (var i = 0; i < ds.Tables[0].Rows.Count; i++)
+        {
+            back += "{";
+            foreach (string col in key)
+                back += "\"" + col + "\": \"" + ds.Tables[0].Rows[i][col].ToString() + "\",";
+            back += "},";
+        }
+        back += "]";
+        return back.Replace(",}", "}").Replace(",]", "]");
+    }
+
+    public static string sqlAdapter(string cmd, string[] key, SqlParameter[] para)
+    {
+        //Return a JSON in string
+        string back = "[";
+        SqlDataAdapter da = new SqlDataAdapter(cmd, sqlConnStr);
+        for (int i = 0; i < para.Count(); i++) 
+            da.SelectCommand.Parameters.Add(para[i]);
+        DataSet ds = new DataSet();
+        da.Fill(ds);
+        for (var i = 0; i < ds.Tables[0].Rows.Count; i++)
+        {
+            back += "{";
+            foreach (string col in key)
+                back += "\"" + col + "\": \"" + ds.Tables[0].Rows[i][col].ToString() + "\",";
+            back += "},";
+        }
+        back += "]";
+        return back.Replace(",}", "}").Replace(",]", "]");
     }
 
     public static string ToHexString(string s)
@@ -71,7 +115,14 @@ public class CAS
 
         return true;
     }
+    public static void log(Exception ex)
+    {
 
+    }
+    public static void log(string str)
+    {
+
+    }
     private static string ToHexString(char chr)
     {
         UTF8Encoding utf8 = new UTF8Encoding();

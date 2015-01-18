@@ -13,7 +13,7 @@ public partial class Gallery : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
 		string cmd = "SELECT CAS_Photo.*, CAS_User.* FROM CAS_Photo, CAS_User WHERE CAS_User.UUID = CAS_Photo.UUID";
-		SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sql_connstr);
+		SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sqlConnStr);
 		DataSet ds = new DataSet();
 		da.Fill(ds);
 		for (var i = 0; i < ds.Tables[0].Rows.Count; i++)

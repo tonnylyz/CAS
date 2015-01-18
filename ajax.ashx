@@ -1,8 +1,10 @@
-﻿<%@ WebHandler Language="C#" Class="ajax"%>
+﻿<%@ WebHandler Language="C#" Class="ajax" %>
 using System;
 using System.Web;
 using System.Data;
 using System.IO;
+using System.Collections.Generic;
+using System.Linq;
 using System.Data.SqlClient;
 using System.Web.SessionState;
 using System.Drawing;
@@ -10,19 +12,6 @@ using System.Drawing.Drawing2D;
 
 public class ajax : IHttpHandler, IRequiresSessionState
 {
-    public static bool IsGuid(object o)
-    {
-        try
-        {
-            Guid a = new Guid(o.ToString());
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
-    }
-
     public bool IsChina(string CString)
     {
         for (int i = 0; i < CString.Length; i++)
@@ -44,7 +33,7 @@ public class ajax : IHttpHandler, IRequiresSessionState
     public string Gethomework(string subject, DateTime dt)
     {
         string back = "";
-        if (Convert.ToInt32(CAS.sql_execute("SELECT COUNT(*) FROM CAS_Homework WHERE date ='" + dt.ToShortDateString() + "' AND subject ='" + subject + "'")) != 0)
+        if (Convert.ToInt32(CAS.sqlExecute("SELECT COUNT(*) FROM CAS_Homework WHERE date ='" + dt.ToShortDateString() + "' AND subject ='" + subject + "'")) != 0)
         {
             switch (subject)
             {
@@ -59,7 +48,7 @@ public class ajax : IHttpHandler, IRequiresSessionState
                 case "geo": back = "<li>地理<ul class='nav'>"; break;
             }
             string cmd = "SELECT * FROM CAS_Homework WHERE date = '" + dt.ToShortDateString() + "' AND subject ='" + subject + "'";
-            SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sql_connstr);
+            SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sqlConnStr);
             DataSet ds = new DataSet();
             da.Fill(ds);
             for (var i = 0; i < ds.Tables[0].Rows.Count; i++)
@@ -74,11 +63,11 @@ public class ajax : IHttpHandler, IRequiresSessionState
     public string Getfilelist(string subject, DateTime dt)
     {
         string back = "";
-        if (Convert.ToInt32(CAS.sql_execute("SELECT COUNT(*) FROM CAS_File WHERE date ='" + dt.ToShortDateString() + "' AND subject ='" + subject + "'")) != 0)
+        if (Convert.ToInt32(CAS.sqlExecute("SELECT COUNT(*) FROM CAS_File WHERE date ='" + dt.ToShortDateString() + "' AND subject ='" + subject + "'")) != 0)
         {
             back = "<li>" + subject + "<ul class='nav'>";
             string cmd = "SELECT * FROM CAS_File WHERE date = '" + dt.ToShortDateString() + "' AND subject ='" + subject + "'";
-            SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sql_connstr);
+            SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sqlConnStr);
             DataSet ds = new DataSet();
             da.Fill(ds);
             for (var i = 0; i < ds.Tables[0].Rows.Count; i++)
@@ -92,11 +81,11 @@ public class ajax : IHttpHandler, IRequiresSessionState
     public string GetfilelistIn(string subject, DateTime dt)
     {
         string back = "";
-        if (Convert.ToInt32(CAS.sql_execute("SELECT COUNT(*) FROM CAS_File WHERE date ='" + dt.ToShortDateString() + "' AND subject ='" + subject + "'")) != 0)
+        if (Convert.ToInt32(CAS.sqlExecute("SELECT COUNT(*) FROM CAS_File WHERE date ='" + dt.ToShortDateString() + "' AND subject ='" + subject + "'")) != 0)
         {
             back = "<li>" + subject + "<ul class='nav'>";
             string cmd = "SELECT * FROM CAS_File WHERE date = '" + dt.ToShortDateString() + "' AND subject ='" + subject + "'";
-            SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sql_connstr);
+            SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sqlConnStr);
             DataSet ds = new DataSet();
             da.Fill(ds);
             for (var i = 0; i < ds.Tables[0].Rows.Count; i++)
@@ -111,7 +100,7 @@ public class ajax : IHttpHandler, IRequiresSessionState
     public string Getbulletinlist(DateTime dt1, DateTime dt2)
     {
         string back = "";
-        SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM CAS_Notice WHERE date between '" + dt1.ToShortDateString() + "' and '" + dt2.ToShortDateString() + "'", CAS.sql_connstr);
+        SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM CAS_Notice WHERE date between '" + dt1.ToShortDateString() + "' and '" + dt2.ToShortDateString() + "'", CAS.sqlConnStr);
         DataSet ds = new DataSet();
         da.Fill(ds);
         for (var i = 0; i < ds.Tables[0].Rows.Count; i++)
@@ -124,7 +113,7 @@ public class ajax : IHttpHandler, IRequiresSessionState
     public string Getbulletinsearch(DateTime dt1, DateTime dt2, string key)
     {
         string back = "";
-        SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM CAS_Notice WHERE date between '" + dt1.ToShortDateString() + "' and '" + dt2.ToShortDateString() + "' AND CONTAINS(title,@key) OR CONTAINS(info,@key)", CAS.sql_connstr);
+        SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM CAS_Notice WHERE date between '" + dt1.ToShortDateString() + "' and '" + dt2.ToShortDateString() + "' AND CONTAINS(title,@key) OR CONTAINS(info,@key)", CAS.sqlConnStr);
         da.SelectCommand.Parameters.Add("@key", SqlDbType.NVarChar, 50);
         da.SelectCommand.Parameters[0].Value = key;
         DataSet ds = new DataSet();
@@ -172,9 +161,9 @@ public class ajax : IHttpHandler, IRequiresSessionState
             myImage.Dispose();
             bitmap.Dispose();
         }
-        catch (Exception ex)
+        catch
         {
-		
+
         }
     }
     public string Encrypt(string strPwd)
@@ -190,116 +179,163 @@ public class ajax : IHttpHandler, IRequiresSessionState
         }
         return str;
     }
+    
+
+    delegate string lbds(string str);
+    delegate bool lbdb(string b);
+    delegate void lbdv(string b);
+    delegate string lbdi(int b);
+
     public void ProcessRequest(HttpContext context)
     {
         context.Response.ContentType = "text/plain";
-        if (context.Session["username"] != null)
+
+        //LAMBDA FUNCTION
+        lbds req = x =>
         {
-            if (context.Request["action"] != null && context.Request["action"].ToString() == "gettalk")
+            if (context.Request[x] != null) 
+                return context.Request[x].ToString(); 
+            else 
+                return "";
+        };
+        lbds crf = x =>
+        {
+            if (context.Request.Form[x] != null)
+                return context.Request.Form[x].ToString();
+            else
+                return "";
+        };
+        lbdb cfn = x => context.Request.Form[x] != null;
+        lbdb rnn = x => context.Request[x] != null;
+        lbds ses = x => context.Session[x].ToString();
+        lbdb snn = x => context.Session[x] != null;
+        lbdi per = x => ses("per").Split(',')[x];
+        lbdb act = x => req("action").ToString() == x;
+        lbdv crw = x => context.Response.Write(x);
+        lbdb isg = x =>
+        {
+            try
             {
-                string back = "";
-                string cmd = "SELECT CAS_Talk.*, CAS_User.* FROM CAS_talk, CAS_User WHERE date BETWEEN '" + DateTime.Now.AddMonths(-3).ToShortDateString() + "' AND '" + DateTime.Now.AddDays(1).ToShortDateString() + "' AND GUID NOT IN (SELECT TUID FROM CAS_Talklog WHERE UUID = '" + context.Session["UUID"] + "') AND CAS_User.UUID = CAS_Talk.UUID";
-                SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sql_connstr);
-                DataSet ds = new DataSet();
-                da.Fill(ds);
-                for (var i = 0; i < ds.Tables[0].Rows.Count; i++)
-                {
-                    back = back + "<div class='talkcard' ID='tc" + ds.Tables[0].Rows[i]["GUID"].ToString() + "'><div class='talkcardhead'><img id='userhead' src='Photo/" + ds.Tables[0].Rows[i]["name"].ToString() + ".jpg' height='40px' width='40px'></div><div class='talkcardinfo'><p class='talkoptitle'>" + ds.Tables[0].Rows[i]["name"].ToString() + "@" + ds.Tables[0].Rows[i]["username"].ToString() + "</p><p class='talkoptitlerd'><a onclick=\"talk_read('" + ds.Tables[0].Rows[i]["GUID"].ToString() + "')\">×</a> | <a onclick=\"talk_good('" + ds.Tables[0].Rows[i]["GUID"].ToString() + "')\">赞</a></p></div><div class='talkcardtime'>" + Convert.ToDateTime(ds.Tables[0].Rows[i]["date"]).GetDateTimeFormats('f')[0].ToString() + "</div><div class='talkcardcontent'>" + ds.Tables[0].Rows[i]["cont"].ToString() + "</div></div>";
-                }
-                context.Response.Write(back);
+                Guid a = new Guid(x.ToString());
+                return true;
             }
-            else if (context.Request["action"] != null && context.Request["action"].ToString() == "talkgood" && context.Request["TUID"] != null && IsGuid(context.Request["TUID"].ToString()))
+            catch
             {
-                string TUID = context.Request["TUID"].ToString();
-                if (Convert.ToInt32(CAS.sql_execute("SELECT COUNT(*) FROM CAS_Talklog WHERE TUID='" + TUID + "' AND UUID='" + context.Session["UUID"].ToString() + "'")) == 0)
-                {
-                    CAS.sql_execute("INSERT INTO CAS_Talklog (TUID, UUID, type) VALUES ('" + TUID + "', '" + context.Session["UUID"].ToString() + "', 1)");
-                }
+                return false;
             }
-            else if (context.Request["action"] != null && context.Request["action"].ToString() == "talkread" && context.Request["TUID"] != null && IsGuid(context.Request["TUID"].ToString()))
+        };
+        
+        //GLOBAL CONN
+        SqlConnection conn = new SqlConnection(CAS.sqlConnStr);
+        conn.Open();
+        
+        //RETURN
+        string[] r_flag_s = { "success", "info", "error", "critical" };
+        int r_flag = 0;
+        string r_data = "";
+        
+        if (snn("UUID") && rnn("action"))
+        {
+            //gettalk(), get talk content
+            if (act("gettalk"))
             {
-                string TUID = context.Request["TUID"].ToString();
-                if (Convert.ToInt32(CAS.sql_execute("SELECT COUNT(*) FROM CAS_Talklog WHERE TUID='" + TUID + "' AND UUID='" + context.Session["UUID"].ToString() + "'")) == 0)
-                {
-                    CAS.sql_execute("INSERT INTO CAS_Talklog (TUID, UUID, type) VALUES ('" + TUID + "', '" + context.Session["UUID"].ToString() + "', 0)");
-                }
-            }
-            else if (context.Request["action"] != null && context.Request["action"].ToString() == "logincheck")
-            {
-                context.Response.Write("success,"+context.Session["UUID"].ToString());
-            }
-            else if (context.Request["action"] != null && context.Request["action"].ToString() == "userinfo" && context.Request["UUID"] != null)
-            {
-                context.Response.Write("success," + context.Session["username"].ToString() + "," + context.Session["realname"].ToString() + "," + context.Session["per"].ToString().Replace(",","-"));
-            }
-            else if (context.Request["action"] != null && context.Request["action"].ToString() == "logout")
-            {
-                context.Session.Abandon();
-            }
-            else if (context.Request["action"] != null && context.Request["action"].ToString() == "talksub" && context.Request.Form["talksubct"] != null && context.Request.Form["talksubct"].ToString().Length < 256)
-            {
-                string cont = context.Request.Form["talksubct"].ToString();
-                SqlConnection conn = new SqlConnection(CAS.sql_connstr);
-                SqlCommand cmd = new SqlCommand("INSERT INTO CAS_Talk (cont, type, UUID) VALUES (@cont, 'talk', '" + context.Session["UUID"].ToString() + "')", conn);
-                SqlParameter para = new SqlParameter("@cont", SqlDbType.NVarChar, 255);
-                para.Value = cont;
-                cmd.Parameters.Add(para);
                 try
                 {
-                    conn.Open();
-                    cmd.ExecuteNonQuery();
-                    context.Response.Write("OK");
+                    r_data = CAS.sqlAdapter("SELECT CAS_Talk.*, CAS_User.* FROM CAS_talk, CAS_User WHERE [GUID] NOT IN (SELECT [TUID] FROM CAS_Talklog WHERE [UUID] = '" + ses("UUID") + "') AND CAS_User.[UUID] = CAS_Talk.[UUID] AND CAS_Talk.[classnum] = '"+ses("classnum")+"'",
+                        new string[] { "GUID", "UUID", "name", "username", "date", "cont" });
+                    r_flag = 0;
                 }
-                catch
+                catch (Exception ex)
                 {
-                    
-                }
-                finally
-                {
-                    conn.Close();
+                    CAS.log(ex);
+                    r_flag = 3;
                 }
             }
-            else if (context.Request["action"] != null && context.Request["action"].ToString() == "gethistalk")
+            //talkgood(TUID), praise a talk
+            else if (act("talkgood") && rnn("TUID"))
             {
-                string back = "";
-                string cmd = "SELECT CAS_Talk.*, CAS_User.* FROM CAS_talk, CAS_User WHERE CAS_User.UUID = CAS_Talk.UUID ORDER BY CAS_Talk.ID DESC";
-                SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sql_connstr);
-                DataSet ds = new DataSet();
-                da.Fill(ds);
-                for (var i = 0; i < ds.Tables[0].Rows.Count; i++)
-                {
-                    back = back + "<div><img style='float:left;margin:5px' src=\"Photo/" + ds.Tables[0].Rows[i]["name"].ToString() + ".jpg\" height=\"40px\" width=\"40px\"/><h4 style='float:left;padding-top:10px'>" + ds.Tables[0].Rows[i]["name"].ToString() + "：</h4><p style='clear:both'>" + ds.Tables[0].Rows[i]["cont"].ToString() + "</p><p style='text-align:right;color:#ccc;'>" + Convert.ToDateTime(ds.Tables[0].Rows[i]["date"]).GetDateTimeFormats('f')[0].ToString() + "<br>赞" + CAS.sql_execute("SELECT COUNT (*) FROM CAS_Talklog WHERE TUID ='" + ds.Tables[0].Rows[i]["GUID"].ToString() + "' AND type = 1").ToString() + "</p></div><hr>";
-                }
-                context.Response.Write(back);
+                //I think it should return something
+                if (Convert.ToInt32(CAS.sqlExecute("SELECT COUNT(*) FROM CAS_Talklog WHERE TUID='" + req("TUID") + "' AND UUID='" + ses("UUID") + "'")) == 0)
+                    CAS.sqlExecute("INSERT INTO CAS_Talklog (TUID, UUID, type) VALUES ('" + req("TUID") + "', '" + ses("UUID") + "', 1)");
+                r_flag = 0;
             }
-            else if (context.Request["action"] != null && context.Request["action"].ToString() == "getaddressbook")
+            //talkread(TUID), read a talk
+            else if (act("talkread") && rnn("TUID"))
+            {
+                //I think it should return something
+                if (Convert.ToInt32(CAS.sqlExecute("SELECT COUNT(*) FROM CAS_Talklog WHERE TUID='" + req("TUID") + "' AND UUID='" + ses("UUID") + "'")) == 0)
+                    CAS.sqlExecute("INSERT INTO CAS_Talklog (TUID, UUID, type) VALUES ('" + req("TUID") + "', '" + ses("UUID") + "', 0)");
+                r_flag = 0;
+            }
+            //logout(), global_logout()
+            else if (act("logout"))
+            {
+                context.Session.Abandon();
+                r_flag = 0;
+                r_data = "{\"info\":\"" + "注销成功。" + "\"}";
+            }
+            //talksub(talksubct)
+            else if (act("talksub") && cfn("talksubct"))
+            {
+                if (crf("talksubct").Length < 256 && crf("talksubct").Trim() != "")
+                {
+                    try
+                    {
+                        SqlCommand cmd = new SqlCommand("INSERT INTO CAS_Talk ([cont],  [UUID], [classnum]) VALUES (@cont, '" + ses("UUID") + "', '" + ses("classnum") + "')", conn);
+                        SqlParameter para = new SqlParameter("@cont", SqlDbType.NVarChar, 255);
+                        para.Value = crf("talksubct");
+                        cmd.Parameters.Add(para);
+                        cmd.ExecuteNonQuery();
+                        r_flag = 0;
+                    }
+                    catch (Exception ex)
+                    {
+                        r_flag = 3;
+                        CAS.log(ex);
+                    }
+                }
+                else
+                {
+                    r_flag = 1;
+                }
+              
+            }
+            //gethistalk()
+            else if (act("gethistalk"))
+            {
+                try
+                {
+                    r_flag = 0;
+                    r_data = CAS.sqlAdapter("SELECT CAS_Talk.[cont], CAS_Talk.[date], CAS_User.[name], CAS_User.[UUID] FROM CAS_talk, CAS_User WHERE CAS_User.[UUID] = CAS_Talk.[UUID] AND CAS_Talk.[classnum] = '213' ORDER BY CAS_Talk.[date] DESC", new string[] { "name", "cont", "date", "UUID" });
+                }
+                catch (Exception ex)
+                {
+                    CAS.log(ex);
+                    r_flag = 3;
+                }
+            }
+            //getaddressbook()
+            else if (act("getaddressbook"))
             {
                 string back = "";
                 string cmd = "SELECT * FROM CAS_User order by [name] collate Chinese_PRC_CS_AS_KS_WS";
-                SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sql_connstr);
+                SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sqlConnStr);
                 DataSet ds = new DataSet();
                 da.Fill(ds);
                 for (var i = 0; i < ds.Tables[0].Rows.Count; i++)
                 {
                     back = back + "<div class=\"col-md-4 cardspan\"><div class=\"infocard\"><a onclick=\"addressbook_showinfo('" + ds.Tables[0].Rows[i]["UUID"].ToString() + "')\"><img src=\"Photo/" + ds.Tables[0].Rows[i]["name"].ToString() + ".jpg\" /><h4>" + ds.Tables[0].Rows[i]["name"].ToString() + " <small>@" + ds.Tables[0].Rows[i]["username"].ToString() + "</small></h4></a></div></div>";
                 }
-                context.Response.Write(back);
+                crw(back);
             }
-            else if (context.Request["action"] != null && context.Request["action"].ToString() == "getaddressinfo" && context.Request["UUID"]!= null)
+            //getaddressinfo(UUID) return {username, name, mail, QQ, birth, phone}
+            else if (act("getaddressinfo") && context.Request["UUID"] != null)
             {
-                string username = "";
-                string name = "";
-                string mail = "";
-                string QQ = "";
-                string birth = "";
-                string phone = "";
-
-                SqlConnection conn = new SqlConnection(CAS.sql_connstr);
-                SqlCommand cmd = new SqlCommand("SELECT * FROM CAS_User WHERE UUID=@UUID",conn);
+                string username = "", name = "", mail = "", QQ = "", birth = "", phone = "";
+                SqlCommand cmd = new SqlCommand("SELECT * FROM CAS_User WHERE UUID=@UUID", conn);
                 SqlParameter para = new SqlParameter("@UUID", SqlDbType.VarChar, 50);
                 para.Value = context.Request["UUID"].ToString();
                 cmd.Parameters.Add(para);
-                conn.Open();
                 SqlDataReader dr = cmd.ExecuteReader();
                 try
                 {
@@ -315,30 +351,33 @@ public class ajax : IHttpHandler, IRequiresSessionState
                 }
                 catch
                 {
-                    
+                    //maybe the birthday format or the null key may lead to an exception 
                 }
                 dr.Close();
-                conn.Close();
-                context.Response.Write(username+","+name+","+mail+","+QQ+","+birth+","+phone);
+                crw(username + "," + name + "," + mail + "," + QQ + "," + birth + "," + phone);
             }
-            else if (context.Request["action"] != null && context.Request["action"].ToString() == "calendarsub" && context.Request.Form["ioinfo"] != null && context.Request.Form["iosta"] != null && context.Request.Form["ioend"] != null && context.Session["per"].ToString().Split(',')[3] != "0")
+            //calendarsub(info, iosta, ioend), add an event(content, start date, end date) if it is a one-day event the last two arguments is the same
+            else if (act("calendarsub") && context.Request.Form["ioinfo"] != null && context.Request.Form["iosta"] != null && context.Request.Form["ioend"] != null && context.Session["per"].ToString().Split(',')[3] != "0")
             {
                 DateTime dt = DateTime.Now;
                 if (DateTime.TryParse(context.Request.Form["iosta"].ToString(), out dt) && DateTime.TryParse(context.Request.Form["ioend"].ToString(), out dt))
                 {
-                    SqlConnection conn = new SqlConnection(CAS.sql_connstr);
-                    SqlCommand cmd = new SqlCommand("INSERT INTO CAS_Calendar (info, sdate, edate, UUID) VALUES (@info, '" + context.Request.Form["iosta"].ToString() + "', '" + context.Request.Form["ioend"].ToString() + "', '" + context.Session["UUID"].ToString() + "')", conn);
-                    SqlParameter para1 = new SqlParameter("@info", SqlDbType.NVarChar, 255);
-                    para1.Value = context.Request.Form["ioinfo"].ToString();
-                    cmd.Parameters.Add(para1);
-
-                    conn.Open();
+                    SqlCommand cmd = new SqlCommand("INSERT INTO CAS_Calendar ([info], [sdate], [edate], [UUID]) VALUES (@info, @sdate, @edate, '" + ses("UUID") + "')", conn);
+                    SqlParameter para = new SqlParameter("@info", SqlDbType.NVarChar, 255);
+                    para.Value = context.Request.Form["ioinfo"].ToString();
+                    cmd.Parameters.Add(para);
+                    para = new SqlParameter("@sdate", SqlDbType.Date);
+                    para.Value = context.Request.Form["iosta"].ToString();
+                    cmd.Parameters.Add(para);
+                    para = new SqlParameter("@edate", SqlDbType.Date);
+                    para.Value = context.Request.Form["ioend"].ToString();
+                    cmd.Parameters.Add(para);
                     cmd.ExecuteNonQuery();
-                    conn.Close();
-                    context.Response.Write("OK");
+                    crw("OK");
                 }
             }
-            else if (context.Request["action"] != null && context.Request["action"].ToString() == "homeworksub" && context.Request.Form["iocont"] != null && context.Session["per"].ToString().Split(',')[6] != "0")
+            //homeworksub(iocont), permission required(per[6] != 0)
+            else if (act("homeworksub") && context.Request.Form["iocont"] != null && context.Session["per"].ToString().Split(',')[6] != "0")
             {
                 string subject = "";
                 switch (context.Session["per"].ToString().Split(',')[6])
@@ -352,232 +391,190 @@ public class ajax : IHttpHandler, IRequiresSessionState
                     case "7": subject = "pol"; break;
                     case "8": subject = "his"; break;
                     case "9": subject = "geo"; break;
+                    //I can't bear such stupid naming method.
                 }
                 string[] str = context.Request.Form["iocont"].Split(',');
-                if (IsOnlyNumber(str[0]))
+                if (IsOnlyNumber(str[0]))//Why did I use this unnecessary function
                 {
                     for (int i = 1; i <= int.Parse(str[0]); i++)
                     {
                         if (str[i] != "")
                         {
-                            SqlConnection conn = new SqlConnection(CAS.sql_connstr);
                             SqlCommand cmd = new SqlCommand("INSERT INTO CAS_Homework (subject,info) VALUES ('" + subject + "',@info)", conn);
                             SqlParameter para = new SqlParameter("@info", SqlDbType.NVarChar, 255);
                             para.Value = i + ". " + str[i];
                             cmd.Parameters.Add(para);
-                            conn.Open();
                             cmd.ExecuteNonQuery();
-                            conn.Close();
                         }
                     }
                 }
-                context.Response.Write("OK");
+                crw("OK");
             }
-            else if (context.Request["action"] != null && context.Request["action"].ToString() == "photosub" && context.Request["title"] != null && context.Session["per"].ToString().Split(',')[2] != "0")
+            else if (act("photosub") && context.Request["title"] != null && context.Session["per"].ToString().Split(',')[2] != "0")
             {
-                SqlConnection conn = new SqlConnection(CAS.sql_connstr);
-                SqlCommand cmd = new SqlCommand("INSERT INTO CAS_Photo (title, UUID) VALUES (@title, '" + context.Session["UUID"].ToString() + "') SELECT @@IDENTITY AS returnName;", conn);
+                SqlCommand cmd = new SqlCommand("INSERT INTO CAS_Photo (title, UUID) VALUES (@title, '" + ses("UUID") + "') SELECT @@IDENTITY AS returnName;", conn);
                 SqlParameter para = new SqlParameter("@title", SqlDbType.NVarChar, 255);
                 para.Value = context.Request["title"].ToString();
                 cmd.Parameters.Add(para);
 
-                conn.Open();
-                string GUID = CAS.sql_execute("SELECT GUID FROM CAS_Photo WHERE ID = " + cmd.ExecuteScalar()).ToString();
-                conn.Close();
+                string GUID = CAS.sqlExecute("SELECT GUID FROM CAS_Photo WHERE ID = " + cmd.ExecuteScalar()).ToString();
                 HttpPostedFile file = context.Request.Files["iofile"];
                 file.SaveAs(context.Server.MapPath("Photo") + "\\" + GUID + ".jpg");
                 FileStream uppho = File.OpenRead(context.Server.MapPath("Photo") + "\\" + GUID + ".jpg");
                 MakeSmallImg(uppho, context.Server.MapPath("Photo") + "\\" + GUID + "_thumb.jpg", 300, 169);
 
-                context.Response.Write("OK");
+                //crw("OK");
             }
-            else if (context.Request["action"] != null && context.Request["action"].ToString() == "noticesub" && context.Request.Form["iotitle"] != null && context.Request.Form["iocont"] != null && context.Session["per"].ToString().Split(',')[4] != "0")
+            else if (act("noticesub") && cfn("iotitle") && cfn("iocont") && per(4) != "0")
             {
-                SqlConnection conn = new SqlConnection(CAS.sql_connstr);
-                SqlCommand cmd = new SqlCommand("INSERT INTO CAS_Notice (title, UUID, info) VALUES (@title, '" + context.Session["UUID"].ToString() + "', @info)", conn);
-                SqlParameter para1 = new SqlParameter("@title", SqlDbType.NVarChar, 255);
-                para1.Value = context.Request["iotitle"].ToString();
-                cmd.Parameters.Add(para1);
-                SqlParameter para2 = new SqlParameter("@info", SqlDbType.NText);
-                para2.Value = context.Request["iocont"].ToString();
-                cmd.Parameters.Add(para2);
-
-                conn.Open();
-                cmd.ExecuteNonQuery();
-                conn.Close();
-                context.Response.Write("OK");
+                try
+                {
+                    SqlCommand cmd = new SqlCommand("INSERT INTO CAS_Notice ([title], [UUID], [info], [classnum]) VALUES (@title, '" + ses("UUID") + "', @info, '" + ses("classnum") + "')", conn);
+                    SqlParameter para = new SqlParameter("@title", SqlDbType.NVarChar, 255);
+                    para.Value = crf("iotitle");
+                    cmd.Parameters.Add(para);
+                    para = new SqlParameter("@info", SqlDbType.NText);
+                    para.Value = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(crf("iocont")));
+                    cmd.Parameters.Add(para);
+                    cmd.ExecuteNonQuery();
+                    r_flag = 0;
+                }
+                catch (Exception ex)
+                {
+                    CAS.log(ex);
+                    r_flag = 3;
+                }
             }
         }
-        if (context.Request["action"] != null && context.Request["action"].ToString() == "login" && context.Request.Form["username"] != null && context.Request.Form["password"] != null && context.Session["username"] == null)
+        //action login(username, password, class) Length: username [3,20], password [6,20], class 3
+        if (act("login") && cfn("username") && cfn("password") && cfn("classnum"))
         {
             if (context.Session["error"] == null)
             {
                 context.Session["error"] = 5;
+                //Only 5 chances for a single browser session to verify the identification
             }
-            string username = context.Request.Form["username"].ToString();
-            string password = context.Request.Form["password"].ToString();
-            string LoginLabel = "";
-            if (!(username.Length > 20 || password.Length > 20))
+            
+            string username = crf("username");
+            string password = crf("password");
+            string classnum = crf("classnum");
+            
+            string info = "";
+            
+            if (int.Parse(ses("error")) <= 0)
             {
-
-                if (int.Parse(context.Session["error"].ToString()) <= 0)
+                info = "系统拒绝服务，请重启浏览器后重试。";
+                r_flag = 3;
+            }
+            else
+            {
+                if (username.Length > 20 || username.Length < 3 || password.Length > 20 || password.Length < 6 || classnum.Length != 3)
                 {
-                    LoginLabel = "错误ID：0x800F040；细节：系统拒绝服务，请重启浏览器后重试。";
+                    info = "用户名、密码或班级长度不合法。";
+                    r_flag = 1;
                 }
                 else
                 {
-                    if (context.Request.Form["username"].ToString() == "" || context.Request.Form["password"].ToString() == "")
+                    SqlCommand cmd = new SqlCommand("SELECT * FROM CAS_User WHERE [username] = @username AND [classnum] = @classnum", conn);
+                    SqlParameter para = new SqlParameter("@username", SqlDbType.VarChar, 30);
+                    para.Value = username.ToLower();
+                    cmd.Parameters.Add(para);
+                    para =new SqlParameter("@classnum", SqlDbType.VarChar, 3);
+                    para.Value = classnum;
+                    cmd.Parameters.Add(para);
+                    try
                     {
-                        LoginLabel = "错误ID：0x800B040；细节：用户名或密码不为空，请重试。";
-                    }
-                    else
-                    {
-                        SqlConnection conn = new SqlConnection(CAS.sql_connstr);
-                        SqlCommand cmd = new SqlCommand("select * from CAS_User where username=@username", conn);
-                        SqlParameter para = new SqlParameter("@username", SqlDbType.VarChar, 30);
-                        para.Value = username.ToLower();
-                        cmd.Parameters.Add(para);
-                        try
+                        SqlDataReader dr = cmd.ExecuteReader();
+                        if (dr.Read())
                         {
-                            conn.Open();
-                            SqlDataReader dr = cmd.ExecuteReader();
-                            if (dr.Read())
+                            if (dr["pwd"].ToString() == Encrypt(password))
                             {
-                                if (dr["pwd"].ToString() == Encrypt(password))
-                                {
-                                    context.Session["username"] = dr["username"].ToString();
-                                    context.Session["realname"] = dr["name"].ToString();
-                                    context.Session["UUID"] = dr["UUID"].ToString();
-                                    context.Session["per"] = dr["permission"].ToString();
-                                    context.Session["error"] = 10;
-                                    LoginLabel = "OK";
-                                }
-                                else
-                                {
-                                    LoginLabel = "错误ID：0x800W040；细节：指定的密码与存储的密码无法匹配，请重试。";
-                                    context.Session["error"] = int.Parse(context.Session["error"].ToString()) - 1;
-                                }
+                                context.Session["classnum"] = classnum;
+                                context.Session["username"] = username.ToLower();
+                                context.Session["realname"] = dr["name"].ToString();
+                                context.Session["UUID"] = dr["UUID"].ToString();
+                                context.Session["per"] = dr["permission"].ToString();
+                                context.Session["error"] = 5;
+                                info = "登陆成功。";
+                                r_flag = 0;
                             }
                             else
                             {
-                                LoginLabel = "错误ID：0x800E040；细节：指定的用户名不存在，请重试。";
-                                context.Session["error"] = int.Parse(context.Session["error"].ToString()) - 1;
+                                info = "指定的密码与存储的密码无法匹配。";
+                                context.Session["error"] = int.Parse(ses("error")) - 1;
+                                r_flag = 2;
                             }
-                            dr.Close();
                         }
-                        catch
+                        else
                         {
-                            LoginLabel = "错误ID：0x800U040；细节：发生未预料的系统错误。";
-                            context.Session["error"] = int.Parse(context.Session["error"].ToString()) - 10;
+                            info = "指定的用户名不存在。";
+                            context.Session["error"] = int.Parse(ses("error")) - 1;
+                            r_flag = 2;
                         }
-                        finally
-                        {
-                            conn.Close();
-                        }
+                        dr.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        CAS.log(ex);
+                        info = "发生未预料的系统错误，请重启浏览器后重试。";
+                        context.Session["error"] = int.Parse(ses("error")) - 5;
+                        r_flag = 3;
                     }
                 }
             }
-            else
-            {
-                LoginLabel = "错误ID：0x800L040；细节：过长的用户名或密码。";
-                context.Session["error"] = int.Parse(context.Session["error"].ToString()) - 1;
-            }
-            context.Response.Write(LoginLabel);
+            r_data = "{\"info\":\"" + info + "\"}";
         }
-        else if (context.Request["action"] != null && context.Request["action"].ToString() == "getbulletin" && context.Request["searchkey"] == null)
+        else if (act("getbulletin") && rnn("searchkey"))
         {
-            context.Response.Write("<li class='nav-header'>近一月</li>");
-            string a1 = Getbulletinlist(new DateTime(DateTime.Now.Year, DateTime.Now.Month - 1, DateTime.Now.Day), DateTime.Now.AddDays(1));
-            if (a1 == "")
+            if (req("searchkey").Trim() == "")
             {
-                context.Response.Write("<li>暂无</li>");
+                r_flag = 1;
             }
             else
             {
-                context.Response.Write(a1);
-            }
-            context.Response.Write("<li class='nav-header'>近三月</li>");
-            string a2 = Getbulletinlist(new DateTime(DateTime.Now.Year, DateTime.Now.Month - 3, DateTime.Now.Day), new DateTime(DateTime.Now.Year, DateTime.Now.Month - 1, DateTime.Now.Day+1));
-            if (a2 == "")
-            {
-                context.Response.Write("<li>无</li>");
-            }
-            else
-            {
-                context.Response.Write(a2);
+                r_data = CAS.sqlAdapter("SELECT * FROM CAS_Notice WHERE [classnum] = '" + ses("classnum") + "' AND CONTAINS(title,@key) OR CONTAINS(info,@key)", new string[] { "title", "GUID" }, new SqlParameter[] { new SqlParameter("@key", req("searchkey")) });
+                r_flag = 0;
             }
         }
-        else if (context.Request["action"] != null && context.Request["action"].ToString() == "getbulletin" && context.Request["searchkey"] != null)
-        {
-            if (context.Request["searchkey"].ToString() == "")
-            {
-                context.Response.Write("<li>无</li>");
-            }
-            else
-            {
-                string a1 = Getbulletinsearch(DateTime.Now.AddMonths(-6), DateTime.Now.AddMonths(12), context.Request["searchkey"].ToString());
-                if (a1 == "")
-                {
-                    context.Response.Write("<li>无</li>");
-                }
-                else
-                {
-                    context.Response.Write(a1);
-                    context.Response.Write("<li class='divider'></li><li><a href=\"Bulletin.aspx\">返回</a></li>");
-                }
-            }
-        }
-        else if (context.Request["action"] != null && context.Request["action"].ToString() == "getnoticeguid" && context.Request["ID"] != null)
-        {
-            if (IsOnlyNumber(context.Request["ID"].ToString()))
-            {
-                context.Response.Write(CAS.sql_execute("SELECT GUID FROM CAS_Notice WHERE ID =" + context.Request["ID"].ToString()));
-            }
-        }
-        else if (context.Request["action"] != null && context.Request["action"].ToString() == "getnotice" && context.Request["GUID"] != null)
+        else if (act("getnotice") && rnn("GUID"))
         {
             string title = "";
             string cont = "";
-            string type = "";
+            string user = "";
             string date = "";
-            int ID = 0;
 
-            SqlConnection conn = new SqlConnection(CAS.sql_connstr);
-            SqlCommand cmd = new SqlCommand("SELECT * FROM CAS_Notice WHERE GUID = @GUID", conn);
-            SqlParameter para1 = new SqlParameter("@GUID", SqlDbType.VarChar, 50);
-            para1.Value = context.Request["GUID"].ToString();
-            cmd.Parameters.Add(para1);
+            SqlCommand cmd = new SqlCommand("SELECT * FROM CAS_Notice WHERE [GUID] = @GUID", conn);
+            SqlParameter para = new SqlParameter("@GUID", SqlDbType.VarChar, 50);
+            para.Value = req("GUID");
+            cmd.Parameters.Add(para);
             try
             {
-                conn.Open();
                 SqlDataReader dr = cmd.ExecuteReader();
                 while (dr.Read())
                 {
-                    ID = Convert.ToInt32(dr["ID"].ToString());
                     title = dr["title"].ToString();
                     cont = dr["info"].ToString();
-                    type = CAS.sql_execute("SELECT name FROM CAS_User WHERE UUID = '"+dr["UUID"].ToString()+"'").ToString();
+                    user = CAS.sqlExecute("SELECT [name] FROM CAS_User WHERE [UUID] = '" + dr["UUID"].ToString() + "'").ToString();
                     date = dr["date"].ToString();
                 }
                 dr.Close();
+                r_flag = 0;
+                r_data = "{\"title\":\"" + title + "\",\"cont\":\"" + Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(cont)) + "\",\"user\":\"" + user + "\",\"date\":\"" + date + "\"}";
             }
-            catch
+            catch (Exception ex)
             {
-
+                CAS.log(ex);
+                r_flag = 3;
             }
-            finally
-            {
-                conn.Close();
-            }
-            context.Response.Write(title + "}{" + type + "}{" + date + "}{" + cont);
+            
         }
-        else if (context.Request["action"] != null && context.Request["action"].ToString() == "gethomeworklist")
+        else if (act("gethomeworklist"))
         {
             string back = "";
             DateTime dt = DateTime.Now;
             if (context.Request["date"] == null)
             {
-                dt = Convert.ToDateTime(CAS.sql_execute("select date from CAS_Homework ORDER BY ID desc"));
+                dt = Convert.ToDateTime(CAS.sqlExecute("select date from CAS_Homework ORDER BY ID desc"));
             }
             else
             {
@@ -588,51 +585,50 @@ public class ajax : IHttpHandler, IRequiresSessionState
             {
                 back = back + Gethomework(sub, dt);
             }
-            context.Response.Write(back);
+            //crw(back);
         }
-        else if (context.Request["action"] != null && context.Request["action"].ToString() == "getnoticelist")
+        else if (act("getnoticelist"))
         {
             string back = "";
             string cmd = "SELECT TOP 7 * FROM CAS_Notice ORDER BY ID DESC";
-            SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sql_connstr);
+            SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sqlConnStr);
             DataSet ds = new DataSet();
             da.Fill(ds);
             for (var i = 0; i < ds.Tables[0].Rows.Count; i++)
             {
                 back = back + "<li><a href='Bulletin.aspx?ID=" + ds.Tables[0].Rows[i]["ID"].ToString() + "'>" + ds.Tables[0].Rows[i]["title"].ToString() + "<span class='badge pull-right'>" + Convert.ToDateTime(ds.Tables[0].Rows[i]["date"]).ToShortDateString() + "</span></a></li>";
             }
-            context.Response.Write(back);
+            //crw(back);
         }
-		else if (context.Request["action"] != null && context.Request["action"].ToString() == "getfilelist")
+        else if (act("getfilelist"))
         {
             string back = "";
             DateTime dt = DateTime.Now;
             if (context.Request["date"] == null)
             {
-                dt = Convert.ToDateTime(CAS.sql_execute("select date from CAS_File ORDER BY ID desc"));
+                dt = Convert.ToDateTime(CAS.sqlExecute("select date from CAS_File ORDER BY ID desc"));
             }
-			else
-			{
-				dt = Convert.ToDateTime(context.Request["date"].ToString());
-			}
+            else
+            {
+                dt = Convert.ToDateTime(context.Request["date"].ToString());
+            }
             string[] subject = new string[] { "语文", "数学", "英语", "物理", "化学", "生物", "政治", "历史", "地理" };
             foreach (string sub in subject)
             {
-				if (context.Request["date"] == null)
-				{
-					back = back + Getfilelist(sub, dt);
-				}
-				else
-				{
-					back = back + GetfilelistIn(sub, dt);
-				}
+                if (context.Request["date"] == null)
+                {
+                    back = back + Getfilelist(sub, dt);
+                }
+                else
+                {
+                    back = back + GetfilelistIn(sub, dt);
+                }
             }
-            context.Response.Write(back);
-		}
-        else if (context.Request["action"] != null && context.Request["action"].ToString() == "getfile" && context.Request["file"] != null)
+            //crw(back);
+        }
+        else if (act("getfile") && context.Request["file"] != null)
         {
             string filename = "";
-            SqlConnection conn = new SqlConnection(CAS.sql_connstr);
             SqlCommand cmd = new SqlCommand("SELECT [filename] FROM CAS_File WHERE path=@path", conn);
             SqlParameter para = new SqlParameter("@path", SqlDbType.NVarChar, 50);
             para.Value = context.Request["file"].ToString();
@@ -654,14 +650,50 @@ public class ajax : IHttpHandler, IRequiresSessionState
                 {
                     context.Response.AddHeader("Content-Disposition", "attachment;filename=\"" + filename + "\"");
                 }
-                else 
+                else
                     context.Response.AddHeader("Content-Disposition", "attachment;filename=" + filename);
                 context.Response.WriteFile(path);
                 context.Response.End();
             }
-            
-                
         }
+        else if (act("getcalendar") && context.Request["start"].ToString() != null && context.Request["end"].ToString() != null)
+        {
+            string eventback = "", birthback = "";
+            string cmd = "SELECT * FROM CAS_Calendar WHERE [sdate] BETWEEN '" + CAS.dateToString(Convert.ToDateTime(context.Request["start"].ToString())) + "' AND '" + CAS.dateToString(Convert.ToDateTime(context.Request["end"].ToString())) + "' OR [edate] BETWEEN '" + Convert.ToDateTime(context.Request["start"].ToString()).ToShortDateString() + "' AND '" + Convert.ToDateTime(context.Request["end"].ToString()).ToShortDateString() + "'";
+            SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sqlConnStr);
+            DataSet ds = new DataSet();
+            da.Fill(ds);
+            for (var i = 0; i < ds.Tables[0].Rows.Count; i++)
+            {
+                eventback = eventback + "{\"title\": \"" + ds.Tables[0].Rows[i]["info"].ToString().Replace("\"", "") + "\", \"start\": \"" + Convert.ToDateTime(ds.Tables[0].Rows[i]["sdate"].ToString()).ToShortDateString().Replace("/", "-") + "\", \"end\": \"" + Convert.ToDateTime(ds.Tables[0].Rows[i]["edate"].ToString()).ToShortDateString().Replace("/", "-") + "\"},";
+            }
+            string cmdb = "SELECT * FROM CAS_User";
+            SqlDataAdapter dab = new SqlDataAdapter(cmdb, CAS.sqlConnStr);
+            DataSet dsb = new DataSet();
+            dab.Fill(dsb);
+            for (var i = 0; i < dsb.Tables[0].Rows.Count; i++)
+            {
+                DateTime dt = DateTime.Now;
+                if (DateTime.TryParse(dsb.Tables[0].Rows[i]["birthday"].ToString(), out dt))
+                {
+                    int r_year_s = Convert.ToDateTime(context.Request["start"].ToString()).Year;
+                    int r_year_e = Convert.ToDateTime(context.Request["end"].ToString()).Year;
+                    int r_mon_s = Convert.ToDateTime(context.Request["start"].ToString()).Month;
+                    int r_mon_e = Convert.ToDateTime(context.Request["end"].ToString()).Month;
+                    int r_day_s = Convert.ToDateTime(context.Request["start"].ToString()).Day;
+                    int r_day_e = Convert.ToDateTime(context.Request["end"].ToString()).Day;
+
+                    if (dt.Month <= r_mon_e && dt.Month >= r_mon_s && dt.Day <= r_day_e && dt.Day >= r_day_s)
+                        if (r_year_s != r_year_e && dt.Month == 1)
+                            birthback = birthback + "{\"title\": \"" + dsb.Tables[0].Rows[i]["name"].ToString() + "的生日\", \"start\": \"" + r_year_e + "-" + (Convert.ToDateTime(dsb.Tables[0].Rows[i]["birthday"].ToString()).Month).ToString() + "-" + Convert.ToDateTime(dsb.Tables[0].Rows[i]["birthday"].ToString()).Day + "\"},";
+                        else
+                            birthback = birthback + "{\"title\": \"" + dsb.Tables[0].Rows[i]["name"].ToString() + "的生日\", \"start\": \"" + r_year_s + "-" + (Convert.ToDateTime(dsb.Tables[0].Rows[i]["birthday"].ToString()).Month).ToString() + "-" + Convert.ToDateTime(dsb.Tables[0].Rows[i]["birthday"].ToString()).Day + "\"},";
+                }
+            }
+            //crw(("[" + eventback + birthback + "]").Replace(",]", "]"));
+        }
+        conn.Close();
+        crw("{\"flag\":\"" + r_flag_s[r_flag] + "\"" + ((r_data != "") ? (",\"data\":" + r_data) : "") + "}");
     }
 
     public bool IsReusable

@@ -4,15 +4,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta name="description" content="深圳中学高二（13）班 班级网站 CAS">
-    <meta name="keywords" content="高二（13）班, 班级网站, 十三班, CAS, 深圳中学, 荣誉体系">
-    <title>十三班 - CAS</title>
+    <meta name="description" content="深圳中学 CAS">
+    <title>CAS</title>
     <link href="css/basic.css" rel="stylesheet" />
     <link href="css/bootstrap.min.css" rel="stylesheet" />
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="js/base64.js"></script>
     <script src="js/basic.js"></script>
-    <script><%if (Session["username"] != null){%>global_login = true;global_UUID='<%=Session["UUID"].ToString()%>';global_username = '<%=Session["username"].ToString()%>';global_realname = '<%=Session["realname"].ToString()%>';global_permission = ['<%=Session["per"].ToString().Replace(",","','")%>'];<%}%></script>
     <asp:ContentPlaceHolder id="script" runat="server">
 
     </asp:ContentPlaceHolder>
@@ -31,49 +30,31 @@
             <div class="navbar-right" id="naviconbar">
                 <ul id="talkbtn" class="nav navbar-nav">
                     <li>
-                        <a onclick="global_loadframe('talk')"><img src="img/icon.talk.png" /><span>消息</span></a>
+                        <a onclick="frameLoad('talk')"><img src="img/icon.talk.png" /><span>消息</span></a>
                     </li>
                 </ul>
                 <ul id="userbtn" class="nav navbar-nav">
                     <li>
-                        <a onclick="global_loadframe('user')"></a>
+                        <a onclick="frameLoad('user')"><img src="Photo/<%=Session["UUID"].ToString() %>.jpg"/><span><%=Session["username"].ToString() %></span></a>
                     </li>
                 </ul>
-                <ul id="loginbtn" class="nav navbar-nav">
-                    <li>
-                        <a onclick="global_loadframe('login')"></a>
-                    </li>
-                </ul>
-                <div class="popover bottom" id="loginframe">
-                    <h3 class="popover-title">
-                        登录
-                        <button type="button" class="close" onclick="global_hideframe()">&times;</button>
-                    </h3>
-                    <div class="popover-content">
-                        <form class="form-signin" id="loginform">
-                            <input id="username" class="form-control" type="text" placeholder="用户名" required autofocus>
-                            <input type="password" class="form-control" id="password" placeholder="密码" required>
-                            <button class="btn btn-lg btn-primary btn-block" type="submit" id="loginsub">登录</button>
-                        </form>
-                    </div>
-                </div>
                 <div class="popover bottom" id="userframe">
                     <h3 class="popover-title">
                         用户操作
-                        <button type="button" class="close" onclick="global_hideframe()">&times;</button>
+                        <button type="button" class="close" onclick="frameHide()">&times;</button>
                     </h3>
                     <div class="popover-content" id="userinfobox">
                         <div class="btn-group btn-group-lg">
-                            <a class="btn btn-default" id="userheadbox"></a>
+                            <a class="btn btn-default" id="userheadbox"><img src="Photo/<%=Session["UUID"].ToString() %>.jpg"/></a>
                             <a href="Personal.aspx" class="btn btn-default">个人</a>
-                            <a class="btn btn-danger" id="logout" onclick="global_logout()">注销</a>
+                            <a class="btn btn-danger" id="logout" onclick="userLogout()">注销</a>
                         </div>
                     </div>
                 </div>
                 <div class="popover bottom" id="talkframe">
                     <h3 class="popover-title">
                         消息
-                        <button type="button" class="close" onclick="global_hideframe()">&times;</button>
+                        <button type="button" class="close" onclick="frameHide()">&times;</button>
                     </h3>
                     <div class="popover-content">
                         <div id="talkcontent"></div>
@@ -112,25 +93,14 @@
     <div class="container">
         <hr>
         <footer>
-            <p>&copy; 2014 深圳中学 高二(13)班 &middot; <a href="About.aspx">关于</a></p>
-            <p>基于开源的CAS构建！</p>
+            <p>&copy; 2015 CUBES Lab &middot; <a href="About.aspx">关于</a></p>
+            <p>基于开源的 <a href="http://github.com/tonnylyz/CAS">CAS</a> 构建！</p>
         </footer>
     </div>
-
     <link href="css/messenger.css" rel="stylesheet" />
     <link href="css/messenger-theme-flat.css" rel="stylesheet" />
     <script src="js/messenger.min.js"></script>
     <script src="js/messenger-theme-flat.js"></script>
     <script src="js/jquery.scrollUp.min.js"></script>
-    <script>
-        (function (i, s, o, g, r, a, m) {
-            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
-                (i[r].q = i[r].q || []).push(arguments)
-            }, i[r].l = 1 * new Date(); a = s.createElement(o),
-            m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
-        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
-        ga('create', 'UA-42420912-1', 'c13.name');
-        ga('send', 'pageview');
-    </script>
 </body>
 </html>

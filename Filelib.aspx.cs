@@ -13,10 +13,10 @@ public partial class Filelib : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
         string cmd = "SELECT DISTINCT date FROM CAS_File ORDER BY date DESC";
-        SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sql_connstr);
+        SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sqlConnStr);
         DataSet ds = new DataSet();
         da.Fill(ds);
-        for (var i = 0; i < 20; i++)
+        for (var i = 0; i < ds.Tables[0].Rows.Count && i < 20; i++)
         {
             back = back + "<li><a onclick=\"filelib_loaddate('" + Convert.ToDateTime(ds.Tables[0].Rows[i]["date"].ToString()).ToShortDateString() + "')\">" + System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetDayName(Convert.ToDateTime(ds.Tables[0].Rows[i]["date"].ToString()).DayOfWeek).ToString() + "  " + Convert.ToDateTime(ds.Tables[0].Rows[i]["date"].ToString()).ToShortDateString() + "</a></li>";
         }

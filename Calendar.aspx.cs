@@ -9,7 +9,7 @@ public partial class Calendar : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
         string cmd = "SELECT * FROM CAS_Calendar";
-        SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sql_connstr);
+        SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sqlConnStr);
         DataSet ds = new DataSet();
         da.Fill(ds);
         for (var i = 0; i < ds.Tables[0].Rows.Count; i++)
@@ -17,7 +17,7 @@ public partial class Calendar : System.Web.UI.Page
             eventback = eventback + "{title: '" + ds.Tables[0].Rows[i]["info"].ToString() + "', start: new Date(" + Convert.ToDateTime(ds.Tables[0].Rows[i]["sdate"].ToString()).Year + ", " + (Convert.ToDateTime(ds.Tables[0].Rows[i]["sdate"].ToString()).Month - 1).ToString() + ", " + Convert.ToDateTime(ds.Tables[0].Rows[i]["sdate"].ToString()).Day + "),end: new Date(" + Convert.ToDateTime(ds.Tables[0].Rows[i]["edate"].ToString()).Year + ", " + (Convert.ToDateTime(ds.Tables[0].Rows[i]["edate"].ToString()).Month - 1).ToString() + ", " + Convert.ToDateTime(ds.Tables[0].Rows[i]["edate"].ToString()).Day + ")},";
         }
         string cmdb = "SELECT * FROM CAS_User";
-        SqlDataAdapter dab = new SqlDataAdapter(cmdb, CAS.sql_connstr);
+        SqlDataAdapter dab = new SqlDataAdapter(cmdb, CAS.sqlConnStr);
         DataSet dsb = new DataSet();
         dab.Fill(dsb);
         for (var i = 0; i < dsb.Tables[0].Rows.Count; i++)

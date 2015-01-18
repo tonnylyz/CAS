@@ -13,7 +13,7 @@ public partial class Homework : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
         string cmd = "SELECT DISTINCT date FROM CAS_Homework ORDER BY date DESC";
-        SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sql_connstr);
+        SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sqlConnStr);
         DataSet ds = new DataSet();
         da.Fill(ds);
         for (var i = 0; i < 21; i++)

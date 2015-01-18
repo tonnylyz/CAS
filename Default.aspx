@@ -1,14 +1,6 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="MasterPage.master" Title="十三班 - CAS" CodeFile="Default.aspx.cs" Inherits="_Default" %>
 <asp:Content ID="script" ContentPlaceHolderID="script" Runat="Server" >
-    <script>
-        global_script("default");
-        function global_onlogout() {
-
-        }
-        function global_onlogin() {
-
-        }
-    </script>
+    <script>Script("default");</script>
 </asp:content>
 
 <asp:Content ID="main" ContentPlaceHolderID="main" Runat="Server">
@@ -23,22 +15,22 @@
                 <div class="item active">
                     <img src="img/slide1.jpg">
                     <div class="carousel-caption">
-                        <h1>CAS 6.3</h1>
-                        <p>全新版本的CAS将颠覆你对高中班级网站的想象！</p>
+                        <h1>CAS 7</h1>
+                        <p>A new version of CAS is coming!</p>
                     </div>
                 </div>
                 <div class="item">
                     <img src="img/slide2.jpg">
                     <div class="carousel-caption">
-                        <h1>响应设计</h1>
-                        <p>全新设计优化对平板、手机的支持。</p>
+                        <h1>Multi-class</h1>
+                        <p>This advanced system will be deployed in several classes.</p>
                     </div>
                 </div>
                 <div class="item">
                     <img src="img/slide3.jpg">
                     <div class="carousel-caption">
-                        <h1>班级网站</h1>
-                        <p>这里的一切都是为班级设计的。为我们的每一个同学。</p>
+                        <h1>SAA</h1>
+                        <p>Access with the SAA Web Account.</p>
                     </div>
                 </div>
             </div>
@@ -52,19 +44,19 @@
     </div>
     <div class="container">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-sm-4">
                 <h2>公告 <small><a href="Bulletin.aspx">更多</a></small></h2>
                 <div id="noticespan" class="bs-sidebar">
                 	<%=onpage[0]%>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-sm-4">
                 <h2>作业 <small id="homeworkdate"><%=onpage[3]%></small></h2>
                 <div id="homeworkspan" class="bs-sidebar">
                 	<%=onpage[1]%>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-sm-4">
                 <h2>课件 <small id="filedate"><%=onpage[4]%></small></h2>
                 <div id="filespan" class="bs-sidebar">
                 	<%=onpage[2]%>

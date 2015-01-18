@@ -4,17 +4,7 @@
     <script src="js/jquery.swipebox.min.js"></script>
     <script src="js/ajaxfileupload.js"></script>
 	<link rel="stylesheet" type="text/css" href="css/swipebox.css">
-    <script>
-        global_script("gallery");
-        function global_onlogout() {
-            $("#iomodalbt").fadeOut("fast");
-        }
-        function global_onlogin() {
-            if (global_permission[2] == "1") {
-                $("#iomodalbt").fadeIn("fast");
-            }
-        }
-    </script>
+    <script>Script("gallery");</script>
 </asp:content>
 
 <asp:Content ID="main" ContentPlaceHolderID="main" Runat="Server">
