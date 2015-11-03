@@ -129,7 +129,7 @@ a {
 }
 /*PERSONAL AVATAR*/
 #preview-pane {
-    display: block;
+    display:block;
     top: 10px;
     padding: 6px;
     border: 1px rgba(0,0,0,.4) solid;
@@ -266,6 +266,10 @@ a {
         margin-bottom: 60px;
     }
 
+    #naviconbar span {
+        display:none;
+    }
+
     #userframe, #talkframe {
         position: fixed;
         top: 50%;
@@ -278,4 +282,23 @@ a {
         margin: 0;
         float: right;
     }
+}
+
+/*EARTH*/
+.we-pp-wrapper {
+    background: rgba(255,255,255,0.7)!important;
+    border-radius:0!important;
+}
+.we-pp-content {
+    margin:10px!important;
+}
+.we-pp-content li {
+    width: 136px;
+
+}
+.we-pp-content li img {
+    display:inline;
+    width:47px;
+    height:47px;
+    margin:-10px 10px -10px -10px;
 }

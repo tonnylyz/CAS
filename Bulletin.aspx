@@ -1,37 +1,32 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="MasterPage.master" Title="十三班 - CAS" CodeFile="Bulletin.aspx.cs" Inherits="Bulletin" %>
-<asp:Content ID="script" ContentPlaceHolderID="script" Runat="Server" >
-    <script src="js/tinymce/tinymce.min.js"></script>
-    <script>Script("bulletin");</script>
-</asp:content>
-
+﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="MasterPage.master" CodeFile="Bulletin.aspx.cs" Inherits="CAS.Bulletin" %>
 <asp:Content ID="main" ContentPlaceHolderID="main" Runat="Server">
 	<div class="container">
         <div class="page-header">
             <h1>班级 <small>公告/通知</small></h1>
-            <%if (Session["per"].ToString().Split(',')[4] == "1") {%>
+            <%if (Session["per"] != null && Session["per"].ToString().Split(',')[4] != "0") {%>
             <button id="iomodalbt" data-toggle="modal" data-target="#iomodal" class="pull-right btn-primary btn">发布公告</button>
             <%} %>
         </div>
     </div>
     <div class="container" style="min-height: 450px;">
         <div class="row">
-            <div class="col-sm-3">
+            <div class="col-md-3">
 				<div class="bs-sidebar">
                     <ul class="nav bs-sidenav" id="bultlist">
-					    <%=onpage[0]%>
+					    <%=listtext%>
                     </ul>
 				</div>
             </div>
-            <div class="col-sm-9" id="bulletinboard">
+            <div class="col-md-9" id="bulletinboard">
                 <div id="ntb">
-                    <%if (onpage[1] != null)
-                          Response.Write("<div class='page-header'><h1>" + onpage[1] + "</h1></div><div>" + onpage[2] + "</div>");
+                    <%if (content != null)
+                          Response.Write("<div class='page-header'><h1>" + content[0] + "</h1></div><div>" + content[1] + "</div>");
                     %>
                 </div>
                 <div class="well" id="defaultb" <%if (Request["ID"] != null){ %>style="display:none"<%}%>>
                     <h2>公告</h2>
                     <p>欲知班级大事事宜，且看公告一览无余。</p>
-                    <p>在右侧目录搜寻或在下方检索</p>
+                    <%--<p>在右侧目录搜寻或在下方检索</p>
                     <form class="form-horizontal" id="searchformid">
                         <fieldset>
                             <div id="legend">
@@ -51,7 +46,7 @@
                                 </div>
                             </div>
                         </fieldset>
-                    </form>
+                    </form>--%>
                 </div>
             </div>
         </div>

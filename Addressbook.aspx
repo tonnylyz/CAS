@@ -1,8 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="MasterPage.master" Title="十三班 - CAS" CodeFile="Addressbook.aspx.cs" Inherits="Addressbook" %>
-<asp:Content ID="script" ContentPlaceHolderID="script" Runat="Server" >
-	<script>Script("addressbook");</script>
-</asp:content>
-
+﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="MasterPage.master" CodeFile="Addressbook.aspx.cs" Inherits="CAS.Addressbook" %>
 <asp:Content ID="main" ContentPlaceHolderID="main" Runat="Server">
     <div class="container">
         <div class="page-header">

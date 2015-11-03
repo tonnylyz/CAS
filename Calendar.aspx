@@ -1,32 +1,11 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="MasterPage.master" Title="十三班 - CAS" CodeFile="Calendar.aspx.cs" Inherits="Calendar" %>
-<asp:Content ID="script" ContentPlaceHolderID="script" Runat="Server" >
-    <script src="js/bootstrap-datetimepicker.min.js"></script>
-    <link href="css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
-
-    <script src="js/bootstrap-switch.min.js"></script>
-    <link href="css/bootstrap-switch.min.css" rel="stylesheet" />
-    
-    <script src="js/moment.js"></script>
-    <script src="js/fullcalendar.min.js"></script>
-    <link href="css/fullcalendar.min.css" rel="stylesheet">
-
-    <script>
-        Script("calendar");
-        $(function () {
-            $('#calendar').fullCalendar({
-                contentHeight: window.innerHeight - 100,
-                editable: false,
-                events: '/ajax.ashx?action=getcalendar'
-            });
-        });
-    </script>
-</asp:content>
-
+﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="MasterPage.master" CodeFile="Calendar.aspx.cs" Inherits="CAS.Calendar" %>
 <asp:Content ID="main" ContentPlaceHolderID="main" Runat="Server">
 	<div class="container">
         <div class="page-header">
             <h1>日历 <small>事项/生日</small></h1>
-            <button id="iomodalbt" data-toggle="modal" data-target="#iomodal" class="pull-right btn-primary btn" style="display:none">添加事项</button>
+            <%if (Session["per"] != null && Session["per"].ToString().Split(',')[3] != "0") {%>
+            <button id="iomodalbt" data-toggle="modal" data-target="#iomodal" class="pull-right btn-primary btn">添加事项</button>
+            <%} %>
         </div>
     </div>
     <div class="container">

@@ -1,24 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Data;
-using System.Data.SqlClient;
-
-public partial class Gallery : System.Web.UI.Page
+namespace CAS
 {
-	public string back = "";
-    protected void Page_Load(object sender, EventArgs e)
+    public partial class Gallery : System.Web.UI.Page
     {
-		string cmd = "SELECT CAS_Photo.*, CAS_User.* FROM CAS_Photo, CAS_User WHERE CAS_User.UUID = CAS_Photo.UUID";
-		SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sqlConnStr);
-		DataSet ds = new DataSet();
-		da.Fill(ds);
-		for (var i = 0; i < ds.Tables[0].Rows.Count; i++)
-		{
-			back = back + "<li class='mix col-md-3 " + ds.Tables[0].Rows[i]["folder"].ToString() + "' data-name='" + ds.Tables[0].Rows[i]["title"].ToString() + "'><a class='thumbnail swipebox' href='Photo/" + ds.Tables[0].Rows[i]["GUID"].ToString() + ".jpg' title='"+ds.Tables[0].Rows[i]["title"].ToString()+"'><img src='Photo/"+ds.Tables[0].Rows[i]["GUID"].ToString()+"_thumb.jpg'><div class='caption'><h4>"+ds.Tables[0].Rows[i]["title"].ToString()+" <small>"+ds.Tables[0].Rows[i]["name"].ToString()+" "+Convert.ToDateTime(ds.Tables[0].Rows[i]["date"].ToString()).ToShortDateString()+"</small></h4></div></a></li>";
-		}
+        public string[] onpage = new string[2];
+        protected void Page_Load()
+        {
+            SqlIntegrate si = new SqlIntegrate(Utility.sqlConnStr);
+            string[,] photo = si.Adapter("SELECT CAS_Photo.*, CAS_User.* FROM CAS_Photo, CAS_User WHERE CAS_User.UUID = CAS_Photo.UUID"
+                , new string[] { "folder", "title", "GUID" , "date" });
+            for (int i = 0; i < photo.GetLength(0); i++)
+                if (Convert.ToDateTime(photo[i,3]) < new DateTime(2015,4,25))
+                    onpage[0] += "<li class=\"mix col-sm-3" + (Convert.IsDBNull(photo[i, 0]) ? "" : (" " + photo[i, 0])) + "\" data-name='" + photo[i, 1] + "'><a class='thumbnail swipebox' href='http://cass.oss-cn-shenzhen.aliyuncs.com/photo/" + photo[i, 2] + ".jpg' title='" + photo[i, 1] + "'><img src='http://cass.oss-cn-shenzhen.aliyuncs.com/photo/" + photo[i, 2] + "_thumb.jpg'><div class='caption'><h4>" + photo[i, 1] + "</h4></div></a></li>";
+                else 
+                    onpage[0] += "<li class=\"mix col-sm-3" + (Convert.IsDBNull(photo[i, 0]) ? "" : (" " + photo[i, 0])) + "\" data-name='" + photo[i, 1] + "'><a class='thumbnail swipebox' href='photo/" + photo[i, 2] + ".jpg' title='" + photo[i, 1] + "'><img src='photo/" + photo[i, 2] + "_thumb.jpg'><div class='caption'><h4>" + photo[i, 1] + "</h4></div></a></li>";
+
+            string[,] folder = si.Adapter("SELECT DISTINCT folder FROM CAS_Photo"
+                , new string[] { "folder" });
+            for (int i = 0; i < folder.GetLength(0); i++)
+                onpage[1] += "<li class=\"filter\" data-filter=\" ." + folder[i, 0] + "\"><a>" + folder[i, 0] + "</a></li>";
+        }
     }
 }

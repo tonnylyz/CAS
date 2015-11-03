@@ -1,10 +1,8 @@
-﻿
-$(function () {
+﻿$(function () {
     Messenger.options = {
         extraClasses: 'messenger-fixed messenger-on-bottom',
         theme: 'flat'
     }
-    $('[data-toggle="tooltip"]').tooltip()
     $('#login-form').submit(function (e) {
         e.preventDefault();
         $('#loginsub').addClass('disabled');
@@ -12,7 +10,7 @@ $(function () {
         $.ajax({
             url: 'ajax.ashx?action=login',
             type: 'post',
-            data: { 'username': $('#username').val(), 'password': $('#password').val(), 'classnum': $('#classnum').val() },
+            data: { 'username': $('#username').val(), 'password': $('#password').val() },
             dataType: "json",
             success: function (result) {
                 if (result.flag == 'success') {

@@ -1,34 +1,27 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="MasterPage.master" Title="十三班 - CAS" CodeFile="Gallery.aspx.cs" Inherits="Gallery" %>
-<asp:Content ID="script" ContentPlaceHolderID="script" Runat="Server" >
-    <script src="js/jquery.mixitup.min.js"></script>
-    <script src="js/jquery.swipebox.min.js"></script>
-    <script src="js/ajaxfileupload.js"></script>
-	<link rel="stylesheet" type="text/css" href="css/swipebox.css">
-    <script>Script("gallery");</script>
-</asp:content>
-
+﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="MasterPage.master" CodeFile="Gallery.aspx.cs" Inherits="CAS.Gallery" %>
 <asp:Content ID="main" ContentPlaceHolderID="main" Runat="Server">
     <div class="container">
         <div class="page-header">
             <h1>图库 <small>班级相册</small></h1>
-            <button id="iomodalbt" data-toggle="modal" data-target="#iomodal" class="pull-right btn-primary btn" style="display:none">上传照片</button>
+            <%if (Session["per"] != null && Session["per"].ToString().Split(',')[3] != "0") {%>
+            <button id="iomodalbt" data-toggle="modal" data-target="#iomodal" class="pull-right btn-primary btn">上传照片</button>
+            <%} %>
         </div>
     </div>
     <div class="container">
-        <div class="btn-group pull-right" style="margin-top: -69px;margin-right: 100px;">
+        <div class="btn-group pull-left" style="margin-top: -69px;margin-left: 190px;">
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                 集 <span class="caret"></span>
             </button>
             <ul class="dropdown-menu" role="menu">
                 <li class="filter" data-filter="all"><a>全部</a></li>
-                <li class="filter" data-filter=".长沙"><a>长沙行</a></li>
-                <li class="filter" data-filter=".体育节"><a>体育节</a></li>
+                <%=onpage[1]%>
             </ul>
         </div>
     </div>
     <div class="container">
 		<ul id="galleryul" class="just row">
-			<%=back%>
+			<%=onpage[0]%>
 		</ul>
     </div>
     

@@ -1,20 +1,15 @@
-﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="MasterPage.master.cs" Inherits="MasterPage" %>
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="MasterPage.master.cs" Inherits="CAS.MasterPage" %>
 <!DOCTYPE html>
 <html>
-<head>
+<head id="head">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta name="description" content="深圳中学 CAS">
-    <title>CAS</title>
+    <meta name="description" content="深圳中学高二（13）班 班级网站 CAS">
+    <meta name="keywords" content="高二（13）班, 班级网站, 十三班, CAS, 深圳中学, 荣誉体系">
+    <title>十三班 - CAS - 纪念版</title>
     <link href="css/basic.css" rel="stylesheet" />
-    <link href="css/bootstrap.min.css" rel="stylesheet" />
-    <script src="js/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/base64.js"></script>
+    <link href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
     <script src="js/basic.js"></script>
-    <asp:ContentPlaceHolder id="script" runat="server">
-
-    </asp:ContentPlaceHolder>
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -28,32 +23,41 @@
                 <a class="navbar-brand" href="Default.aspx">CAS</a>
             </div>
             <div class="navbar-right" id="naviconbar">
+                <%if (Session["UUID"] != null) {%>
                 <ul id="talkbtn" class="nav navbar-nav">
                     <li>
-                        <a onclick="frameLoad('talk')"><img src="img/icon.talk.png" /><span>消息</span></a>
+                        <a onclick="frameLoad('talk')">
+                            <img src="img/icon.talk.png" /><span>消息</span></a>
                     </li>
                 </ul>
+                <%} %>
                 <ul id="userbtn" class="nav navbar-nav">
                     <li>
-                        <a onclick="frameLoad('user')"><img src="Photo/<%=Session["UUID"].ToString() %>.jpg"/><span><%=Session["username"].ToString() %></span></a>
+                        <%if (Session["UUID"] != null) {%>
+                        <a onclick="frameLoad('user')">
+                            <img src="photo/<%=Session["UUID"].ToString() %>.jpg" /><span><%=Session["username"].ToString() %></span></a>
+                        <%} else { %>
+                        <a href="Login.aspx">
+                            <img src="img/icon.login.png" /><span>登录</span></a>
+                        <%} %>
                     </li>
                 </ul>
+                <%if (Session["UUID"] != null) {%>
                 <div class="popover bottom" id="userframe">
-                    <h3 class="popover-title">
-                        用户操作
+                    <h3 class="popover-title">用户操作
                         <button type="button" class="close" onclick="frameHide()">&times;</button>
                     </h3>
                     <div class="popover-content" id="userinfobox">
                         <div class="btn-group btn-group-lg">
-                            <a class="btn btn-default" id="userheadbox"><img src="Photo/<%=Session["UUID"].ToString() %>.jpg"/></a>
+                            <a class="btn btn-default" id="userheadbox">
+                                <img src="photo/<%=Session["UUID"].ToString() %>.jpg" /></a>
                             <a href="Personal.aspx" class="btn btn-default">个人</a>
                             <a class="btn btn-danger" id="logout" onclick="userLogout()">注销</a>
                         </div>
                     </div>
                 </div>
                 <div class="popover bottom" id="talkframe">
-                    <h3 class="popover-title">
-                        消息
+                    <h3 class="popover-title">消息
                         <button type="button" class="close" onclick="frameHide()">&times;</button>
                     </h3>
                     <div class="popover-content">
@@ -72,35 +76,29 @@
                         </form>
                     </div>
                 </div>
+                <%} %>
             </div>
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
                     <li><a href="Bulletin.aspx">公告</a></li>
+                    <li><a href="Earth.aspx">地图</a></li>
                     <li><a href="Talk.aspx">消息</a></li>
                     <li><a href="Calendar.aspx">日历</a></li>
                     <li><a href="Gallery.aspx">图库</a></li>
-                    <li><a href="Homework.aspx">作业</a></li>
-                    <li><a href="Filelib.aspx">课件</a></li>
                 </ul>
             </div>
         </div>
     </div>
 
-    <asp:ContentPlaceHolder id="main" runat="server">
-        
+    <asp:ContentPlaceHolder ID="main" runat="server">
     </asp:ContentPlaceHolder>
-    
+
     <div class="container">
         <hr>
         <footer>
-            <p>&copy; 2015 CUBES Lab &middot; <a href="About.aspx">关于</a></p>
+            <p>&copy; 2015 深圳中学 十三班 &middot; <a href="About.aspx">关于</a> &middot; 纪念版</p>
             <p>基于开源的 <a href="http://github.com/tonnylyz/CAS">CAS</a> 构建！</p>
         </footer>
     </div>
-    <link href="css/messenger.css" rel="stylesheet" />
-    <link href="css/messenger-theme-flat.css" rel="stylesheet" />
-    <script src="js/messenger.min.js"></script>
-    <script src="js/messenger-theme-flat.js"></script>
-    <script src="js/jquery.scrollUp.min.js"></script>
 </body>
 </html>

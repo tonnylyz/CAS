@@ -1,137 +1,127 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="MasterPage.master" Title="十三班 - CAS"  CodeFile="Personal.aspx.cs" Inherits="Personal" %>
-<asp:Content ID="script" ContentPlaceHolderID="script" Runat="Server" >
-    <script>Script("personal");</script>
-    <script src="js/jquery.Jcrop.min.js"></script>
-	<link href="css/jquery.Jcrop.min.css" rel="stylesheet" />
-</asp:content>
+﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="MasterPage.master" CodeFile="Personal.aspx.cs" Inherits="CAS.Personal" %>
 
-<asp:Content ID="main" ContentPlaceHolderID="main" Runat="Server">
+<asp:Content ID="main" ContentPlaceHolderID="main" runat="Server">
     <div class="container fixedfirst">
         <div class="page-header">
             <h1>个人 <small>资料更改</small></h1>
         </div>
     </div>
-    <%if (Session["username"] != null){ %>
     <div class="container" style="min-height: 450px;">
         <ul id="Tab" class="nav nav-tabs">
             <li class="active"><a href="#info" data-toggle="tab">资料</a></li>
-            <li class=""><a href="#head" data-toggle="tab">头像</a></li>
+            <li class=""><a href="#avatar" data-toggle="tab">头像</a></li>
             <li class=""><a href="#pwd" data-toggle="tab">密码</a></li>
             <li class=""><a href="Addressbook.aspx">通讯录</a></li>
         </ul>
-        <form runat="server" id="TabContent" class="tab-content">
+        <div id="TabContent" class="tab-content">
             <div class="tab-pane active" id="info">
-                <script>$(function () { $("#main_QQ").val('<%=infoa[0]%>'); $("#main_birthday").val('<%=infoa[3]%>'); $("#main_phone").val('<%=infoa[2]%>'); $("#main_mail").val('<%=infoa[1]%>'); });</script>
-                <div class="form-horizontal">
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label" for="birthday">生日</label>
-                            <div class="col-sm-6">
-                                <asp:TextBox ID="birthday" runat="server" TextMode="Date" MaxLength="50" CssClass="form-control"></asp:TextBox>
-                                <p class="help-block">请按格式填写</p>
-                            </div>
+                <form id="infoform" class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="birthday">生日</label>
+                        <div class="col-sm-6">
+                            <input type="text" id="birthday" class="form-control" placeholder="生日">
+                            <p class="help-block">请按格式填写，如“2015-1-1”</p>
                         </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label" for="QQ">QQ</label>
-                            <div class="col-sm-6">
-                                <asp:TextBox ID="QQ" runat="server" TextMode="Phone" placeholder="QQ" MaxLength="50" CssClass="form-control"></asp:TextBox>
-                                <p class="help-block">阁下的QQ号码</p>
-                            </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="QQ">QQ</label>
+                        <div class="col-sm-6">
+                            <input type="text" id="QQ" class="form-control" placeholder="QQ">
                         </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label" for="phone">手机</label>
-                            <div class="col-sm-6">
-                                <asp:TextBox ID="phone" runat="server" TextMode="Phone" placeholder="手机" MaxLength="50" CssClass="form-control"></asp:TextBox>
-                                <p class="help-block">阁下的手机</p>
-                            </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="phone">手机</label>
+                        <div class="col-sm-6">
+                            <input type="text" id="phone" class="form-control" placeholder="手机">
                         </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label" for="mail">邮箱</label>
-                            <div class="col-sm-6">
-                                <asp:TextBox ID="mail" runat="server" placeholder="邮箱" TextMode="Email" MaxLength="50" CssClass="form-control"></asp:TextBox>
-                                <p class="help-block">阁下的邮箱</p>
-                            </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="mail">邮箱</label>
+                        <div class="col-sm-6">
+                            <input type="text" id="mail" class="form-control" placeholder="邮箱">
                         </div>
-                        <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-6">
-                                <asp:Button ID="Updateinfo" runat="server" Text="提交" OnClick="Updateinfo_Click" CssClass="btn btn-primary"/>
-                            </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="university">大学</label>
+                        <div class="col-sm-6">
+                            <input type="text" id="university" class="form-control" placeholder="大学">
                         </div>
-                </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-6">
+                            <button type="submit" id="infosub" class="btn btn-primary">提交</button>
+                        </div>
+                    </div>
+                </form>
             </div>
-            <div class="tab-pane" id="head" style="overflow:hidden">
-                <div class="form-horizontal">
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label" for="FileHead">待裁切照片</label>
-                            <div class="col-sm-6">
-                                <asp:FileUpload ID="FileHead" runat="server"/>
-                                <p class="help-block">仅支持jpg格式图像</p>
-                            </div>
+            <div class="tab-pane" id="avatar" style="overflow: hidden">
+                <form id="avatarform" class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="FileHead">待裁切照片</label>
+                        <div class="col-sm-6">
+                            <input id="iofile" class="form-control" name="iofile" type="file">
+                            <p class="help-block">仅支持jpg格式图像，请不要在移动设备完成这项操作。</p>
                         </div>
-                        <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-6">
-                                <asp:Button ID="UploadHead" runat="server" Text="上传" CssClass="btn btn-primary" OnClick="UploadHead_Click" />
-                            </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-6">
+                            <button type="submit" id="avatarsub" class="btn btn-primary">提交</button>
                         </div>
-                </div>
-                <hr>
-                <%if (Session["tempimg"]!=null && System.IO.File.Exists(Server.MapPath("Photo") + "\\" + Session["tempimg"].ToString()))
-                  { %>
-
-                <div style="display:none">
-                    <label>X1<input type="text" size="4" id="x" name="x" /></label>
-                    <label>Y1<input type="text" size="4" id="y" name="y" /></label>
-                    <label>X2<input type="text" size="4" id="x2" name="x2" /></label>
-                    <label>Y2<input type="text" size="4" id="y2" name="y2" /></label>
-                    <label>W<input type="text" size="4" id="w" name="w" /></label>
-                    <label>H<input type="text" size="4" id="h" name="h" /></label>
-                </div>
-                <div>
-                    <img src="Photo/<%=Session["tempimg"].ToString() %>" id="target" />
-                    <div id="preview-pane" style="display: none">
+                    </div>
+                </form>
+                <div id="avatarcrop" style="display: none;">
+                    <img src="#" id="target" />
+                    <div id="preview-pane" style="display: none;">
                         <div class="preview-container">
-                            <img src="Photo/<%=Session["tempimg"].ToString() %>" class="jcrop-preview"/>
+                            <img src="#" class="jcrop-preview" />
                         </div>
-                        <p id="headok" style="text-align: center; margin-top: 5px;">
-                            <asp:Button ID="Button1" runat="server" Text="保存" CssClass="btn btn-primary" OnClick="Savehead_Click" /></p>
+                        <div style="text-align: center; margin-top: 5px;">
+                            <form id="cropform">
+                                <div style="display: none">
+                                    <input type="text" size="4" id="x" name="x" />
+                                    <input type="text" size="4" id="y" name="y" />
+                                    <input type="text" size="4" id="x2" name="x2" />
+                                    <input type="text" size="4" id="y2" name="y2" />
+                                    <input type="text" size="4" id="w" name="w" />
+                                    <input type="text" size="4" id="h" name="h" />
+                                </div>
+                                <button type="submit" id="cropsub" class="btn btn-primary">提交</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
-                <%} %>
             </div>
             <div class="tab-pane" id="pwd">
-
-                <div class="form-horizontal">
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label" for="opwd">原密码</label>
-                            <div class="col-sm-6">
-                                <asp:TextBox ID="opwd" runat="server" MaxLength="20" TextMode="Password" placeholder="原密码" CssClass="form-control"></asp:TextBox>
-                                <p class="help-block">键入当前的密码</p>
-                            </div>
+                <form id="passwordform" class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="opwd">原密码</label>
+                        <div class="col-sm-6">
+                            <input type="text" id="password" class="form-control" placeholder="原密码">
+                            <p class="help-block">键入当前的密码</p>
                         </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label" for="newpwd">新密码</label>
-                            <div class="col-sm-6">
-                                <asp:TextBox ID="newpwd" runat="server" MaxLength="20" TextMode="Password" placeholder="新密码" CssClass="form-control"></asp:TextBox>
-                                <p class="help-block">6-20位的新密码。</p>
-                            </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="newpwd">新密码</label>
+                        <div class="col-sm-6">
+                            <input type="text" id="passwordn" class="form-control" placeholder="新密码">
+                            <p class="help-block">[6,20]位的新密码。</p>
                         </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label" for="rnpwd">确认密码</label>
-                            <div class="col-sm-6">
-                                <asp:TextBox ID="rnpwd" runat="server" MaxLength="20" TextMode="Password" placeholder="重复确认" CssClass="form-control"></asp:TextBox>
-                                <p class="help-block">再次键入防止错误。</p>
-                            </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="rnpwd">确认密码</label>
+                        <div class="col-sm-6">
+                            <input type="text" id="passwordr" class="form-control" placeholder="确认">
+                            <p class="help-block">再次键入防止错误。</p>
                         </div>
-                        <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-6">
-                                <asp:Button ID="changepwd" runat="server" Text="提交"  CssClass="btn btn-primary"/>
-                            </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-6">
+                            <button type="submit" id="passwordsub" class="btn btn-primary">提交</button>
                         </div>
-                </div>
+                    </div>
+                </form>
 
             </div>
-        </form>
+        </div>
     </div>
-    <%}
-      else { Response.Write("<div class='container'><div class='alert alert-warning'>请登录查看该页面</div></div>"); } %>
-    <script>$(function () { <%=page_script%> });</script>
 </asp:Content>
