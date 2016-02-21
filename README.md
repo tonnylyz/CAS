@@ -7,17 +7,15 @@ THIS VERSION IS BASED ON MYSQL/MONO PLATFORM!
 
 The core component - the SQL integrated class - is out of date
 
-This version(brunch) won't be maintained any more
+This version(branch) won't be maintained any more
 
-Roughly, this version is similar with the one runing at C13.NAME
-
-CAS SPECAIL VERSION HAS NO PLAN TO TAKE UP THE OOP (CURRENT CLASSES IS deprecated)
+Roughly, this version is similar with the one runing at https://cas.lyzde.com
 
 #Requirement
 
-MYSQY DYNAMIC LINKED LIB (.NET VERSION, YEP MONO SUPPORTS IT. SINCE IT HAS ITS OWN LICENSE I CAN'T PROVIDE THE BINARY)
+MYSQY DYNAMIC LINKED LIB (.NET VERSION)
 
-MYSQL DATABASE scheme designs are as followed:
+MYSQL DATABASE schema designs are as followed:
 
 
 	CREATE DATABASE IF NOT EXISTS `CAS` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
