@@ -1,113 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Data;
-using System.Data.SqlClient;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 
 public partial class _Default : System.Web.UI.Page
 {
-	public string getHomework(int subject, DateTime dt)
-    {
-        string back = "";
-        if (Convert.ToInt32(CAS.sqlExecute("SELECT COUNT(*) FROM CAS_Homework WHERE [date] ='" + CAS.dateToString(dt) + "' AND [subject] =" + subject + " AND [classnum] = '" + Session["classnum"].ToString() + "'")) != 0)
-        {
-            back = "<li>" + CAS.subject[subject] + "<ul class='nav'>";
-            string cmd = "SELECT * FROM CAS_Homework WHERE [date] = '" + CAS.dateToString(dt) + "' AND [subject] =" + subject + " AND [classnum] = '" + Session["classnum"].ToString() + "'";
-            SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sqlConnStr);
-            DataSet ds = new DataSet();
-            da.Fill(ds);
-            for (var i = 0; i < ds.Tables[0].Rows.Count; i++)
-            {
-                back += "<li>" + ds.Tables[0].Rows[i]["info"].ToString() + "</li>";
-            }
-            back += "</ul><li>";
-        }
-        return back;
-    }
-
-    public string getFile(int subject, DateTime dt)
-    {
-        string back = "";
-        if (Convert.ToInt32(CAS.sqlExecute("SELECT COUNT(*) FROM CAS_File WHERE [date] ='" + CAS.dateToString(dt) + "' AND [subject] =" + subject + " AND [classnum] = '" + Session["classnum"].ToString() + "'")) != 0)
-        {
-            back = "<li>" + CAS.subject[subject] + "<ul class='nav'>";
-            string cmd = "SELECT * FROM CAS_File WHERE [date] = '" + CAS.dateToString(dt) + "' AND [subject] =" + subject + " AND [classnum] = '" + Session["classnum"].ToString() + "'";
-            SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sqlConnStr);
-            DataSet ds = new DataSet();
-            da.Fill(ds);
-            for (var i = 0; i < ds.Tables[0].Rows.Count; i++)
-            {
-                back = back + "<li><a href=\"file.ashx?file=" + ds.Tables[0].Rows[i]["GUID"].ToString() + "\">" + ds.Tables[0].Rows[i]["filename"].ToString() + "</a></li>";
-            }
-            back = back + "</ul><li>";
-        }
-        return back;
-    }
-
-	public string getFileList()
-	{
-        string back = "<ul class='nav bs-sidenav'>";
-        DateTime dt;
-        if (DateTime.TryParse(CAS.sqlExecute("SELECT TOP 1 [date] FROM CAS_File WHERE [classnum] = '" + Session["classnum"].ToString() + "' ORDER BY [date] DESC"), out dt)) 
-            for (int sub = 0; sub < 9; sub++)
-                back += getFile(sub, dt);
-        else
-            back += "<li>暂无</li>";
-        back += "</ul>";
-        return back;
-	}
-	
-	public string getHomeworkList()
-	{
-        string back = "<ul class='nav bs-sidenav'>";
-        DateTime dt;
-        if (DateTime.TryParse(CAS.sqlExecute("SELECT TOP 1 [date] FROM CAS_Homework WHERE [classnum] = '" + Session["classnum"].ToString() + "' ORDER BY [date] DESC"), out dt))
-            for (int sub = 0; sub < 9; sub++)
-                back += getHomework(sub, dt);
-        else
-            back += "<li>暂无</li>";
-        back += "</ul>";
-		return back;
-	}
-	
-	public string getNoticeList()
-	{
-		string back = "<ul class='nav bs-sidenav'>";
-		string cmd;
-        if (Convert.ToInt32(CAS.sqlExecute("SELECT COUNT(*) FROM CAS_Notice WHERE [classnum] = '" + Session["classnum"].ToString() + "'")) >= 7)
-            cmd = "SELECT TOP 7 * FROM CAS_Notice WHERE [classnum] = '" + Session["classnum"].ToString() + "' ORDER BY [date] DESC";
-        else
-            cmd = "SELECT * FROM CAS_Notice WHERE [classnum] = '" + Session["classnum"].ToString() + "' ORDER BY [date] DESC";
-		SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sqlConnStr);
-		DataSet ds = new DataSet();
-		da.Fill(ds);
-		for (var i = 0; i < ds.Tables[0].Rows.Count; i++)
-		{
-			back = back + "<li><a href='Bulletin.aspx?ID=" + ds.Tables[0].Rows[i]["GUID"].ToString() + "'>" + ds.Tables[0].Rows[i]["title"].ToString() + "</a></li>";
-		}
-        back = back + "</ul>";
-		return back;
-	}
-	
-	public string[] onpage = new string[5];
+	public string[] onPage = new string[3];
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (Session["UUID"] == null)
+        if (!CAS.User.IsLogin)
             Response.Redirect("Login.aspx");
-		onpage[0] = getNoticeList();
-		onpage[1] = getHomeworkList();
-		onpage[2] = getFileList();
-        DateTime dt;
-        if (DateTime.TryParse(CAS.sqlExecute("SELECT TOP 1 [date] FROM CAS_Homework WHERE [classnum] = '" + Session["classnum"].ToString() + "' ORDER BY [date] DESC"), out dt))
-            onpage[3] = dt.ToShortDateString();
-        else
-            onpage[3] += "";
-        if (DateTime.TryParse(CAS.sqlExecute("SELECT TOP 1 [date] FROM CAS_File WHERE [classnum] = '" + Session["classnum"].ToString() + "' ORDER BY [date] DESC"), out dt))
-            onpage[4] = dt.ToShortDateString();
-        else
-            onpage[4] += "";
+
+        CAS.SqlIntegrate si = new CAS.SqlIntegrate(CAS.Utility.connStr);
+
+
+        onPage[0] = "<ul class=\"nav bs-sidenav\">";
+        DataTable dt = si.Adapter("SELECT TOP 7 * FROM CAS_Notice ORDER BY [date] DESC");
+        for (int i = 0; i < dt.Rows.Count; i++)
+            onPage[0] += "<li><a href=\"Bulletin.aspx?ID=" + dt.Rows[i]["GUID"].ToString() + "\">" + dt.Rows[i]["title"].ToString() + "</a></li>";
+        onPage[0] += "</ul>";
+
+        onPage[1] = si.Query("SELECT TOP 1 GUID FROM CAS_Photo ORDER BY ID DESC").ToString();
+        
+        dt = si.Adapter("SELECT * FROM CAS_User WHERE (DATEADD(year, DATEPART(year, GETDATE()) - DATEPART(year, birthday), birthday)) BETWEEN GETDATE() AND DATEADD(day, 30, GETDATE()) ORDER BY DATEPART(month, birthday) ASC");
+        for (int i = 0; i < dt.Rows.Count; i++)
+            onPage[2] += "<tr><th>" + dt.Rows[i]["name"].ToString() + "</th><th>" + dt.Rows[i]["birthday"].ToString() + "</th></tr>";
+        onPage[2] = onPage[2].Replace(" 0:00:00", "");
     }
 }

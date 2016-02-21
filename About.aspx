@@ -6,8 +6,10 @@
         </div>
     </div>
     <div class="container">
-        <p>CAS now is a project of <a href="http://lab.xuehuo.org">CUBES Lab</a>.</p>
-        <p>Original author: <a href="http://www.lyzde.com">Tonny Leung</a>.</p>
-        <p>CAS Version: 7.0.3.0 (Alpha) EXT14 Build 20150123<br />This software is released under the <a href="http://www.gnu.org/licenses/lgpl.html">LGPL</a>.</p>
+        <p>CAS now is a project of CUBES Lab.</p>
+        <p>Original author: <a href="https://www.lyzde.com">Tonny Leung</a>.</p>
+        <p>CAS Version: 7.0.3.6<br>This software is released under the <a href="http://www.gnu.org/licenses/lgpl.html">LGPL</a>.</p>
     </div>
+</asp:Content>
+<asp:Content ID="script" ContentPlaceHolderID="script" Runat="Server">
 </asp:Content>

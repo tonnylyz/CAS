@@ -1,46 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using System.Data;
-using System.Data.SqlClient;
 
 public partial class Gallery : System.Web.UI.Page
 {
-    public void loadPhoto()
-    {
-        string cmd = "SELECT CAS_Photo.*, CAS_User.* FROM CAS_Photo, CAS_User WHERE CAS_User.UUID = CAS_Photo.UUID AND CAS_Photo.[classnum] = '" + Session["classnum"].ToString() + "'";
-        SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sqlConnStr);
-        DataSet ds = new DataSet();
-        da.Fill(ds);
-        for (var i = 0; i < ds.Tables[0].Rows.Count; i++)
-        {
-            onpage[0] += "<li class=\"mix col-sm-3" + (Convert.IsDBNull(ds.Tables[0].Rows[i]["folder"]) ? "" : (" " + ds.Tables[0].Rows[i]["folder"].ToString())) + "\" data-name='" + ds.Tables[0].Rows[i]["title"].ToString() + "'><a class='thumbnail swipebox' href='Photo/" + ds.Tables[0].Rows[i]["GUID"].ToString() + ".jpg' title='" + ds.Tables[0].Rows[i]["title"].ToString() + "'><img src='Photo/" + ds.Tables[0].Rows[i]["GUID"].ToString() + "_thumb.jpg'><div class='caption'><h4>" + ds.Tables[0].Rows[i]["title"].ToString() + "</h4></div></a></li>";
-        }
-    }
-
-    public void loadFolder()
-    {
-        string cmd = "SELECT DISTINCT [folder] FROM CAS_Photo WHERE [classnum] = '" + Session["classnum"].ToString() + "'";
-        SqlDataAdapter da = new SqlDataAdapter(cmd, CAS.sqlConnStr);
-        DataSet ds = new DataSet();
-        da.Fill(ds);
-        for (var i = 0; i < ds.Tables[0].Rows.Count; i++)
-        {
-            if (!Convert.IsDBNull(ds.Tables[0].Rows[i]["folder"]))
-                onpage[1] += "<li class=\"filter\" data-filter=\" ." + ds.Tables[0].Rows[i]["folder"].ToString() + "\"><a>" + ds.Tables[0].Rows[i]["folder"].ToString() + "</a></li>";
-        }
-    }
-
-	public string[] onpage = new string[2];
+	public string[] onPage = new string[2];
     protected void Page_Load(object sender, EventArgs e)
     {
-        
-        if (Session["UUID"] == null)
+        if (!CAS.User.IsLogin)
             Response.Redirect("Login.aspx");
-        loadPhoto();
-        loadFolder();
+        CAS.SqlIntegrate si = new CAS.SqlIntegrate(CAS.Utility.connStr);
+        DataTable dt = si.Adapter("SELECT CAS_Photo.*, CAS_User.* FROM CAS_Photo, CAS_User WHERE CAS_User.UUID = CAS_Photo.UUID ORDER BY CAS_Photo.ID DESC");
+        for (int i = 0; i < dt.Rows.Count; i++)
+            onPage[0] += "<li class=\"mix col-sm-3" + (Convert.IsDBNull(dt.Rows[i]["folder"]) ? "" : (" " + dt.Rows[i]["folder"].ToString())) + "\" data-name=\"" + dt.Rows[i]["title"].ToString() + "\">"
+                            +"<a class=\"thumbnail swipebox\" href=\"Photo/" +dt.Rows[i]["GUID"].ToString() + ".jpg\" title=\"" + dt.Rows[i]["title"].ToString() + "\">" 
+                               + "<img src=\"Photo/" + dt.Rows[i]["GUID"].ToString() + "_thumb.jpg\">" 
+                               + "<div class=\"caption\">" 
+                                  + "<h4>" + dt.Rows[i]["title"].ToString() + "</h4>" 
+                               + "</div>" 
+                            + "</a>" 
+                        + "</li>";
+        dt = si.Adapter("SELECT DISTINCT [folder] FROM CAS_Photo");
+        for (int i = 0; i < dt.Rows.Count; i++)
+            if (!Convert.IsDBNull(dt.Rows[i]["folder"]))
+                onPage[1] += "<li class=\"filter\" data-filter=\" ." + dt.Rows[i]["folder"].ToString() + "\"><a>" + dt.Rows[i]["folder"].ToString() + "</a></li>";
     }
 }

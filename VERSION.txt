@@ -1,6 +1,6 @@
-/*!
- * CAS 7.0.3.0
- * Copyright 2014 CUBESlab.
+/*
+ * CAS 7.0.3.6
+ * Copyright 2016 CUBESlab.
  * Original author: Tonny Leung (http://www.lyzde.com)
  * This project is now maintained by CUBES Lab (http://lab.xuehuo.org)
  * Licensed under LGPL (http://www.gnu.org/licenses/lgpl.html)

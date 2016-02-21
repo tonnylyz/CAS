@@ -1,59 +1,144 @@
-﻿body {
+﻿@import url(//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css);
+
+* {
+    border-radius: 0px !important;
+}
+
+body {
     padding-top: 50px;
 }
 
 a {
     cursor: pointer;
 }
-/*PAGE LOADING*/
-#pageloading {
-    height: 50px;
-    width: 50px;
-    margin: 25% 0 0 50%;
-}
-/*PAGE LOADING END*/
 
-/*CARD SPAN*/
-.cardspan {
-    text-align: center;
-    height: 120px;
-    padding: 5px;
-}
 
-    .cardspan img {
-        height: 60px;
-        width: 60px;
-    }
-
-    .cardspan a {
-        display: block;
-        box-shadow: 0px 0px 2px rgba(1, 109, 175, 0.52);
-        padding: 5px;
-    }
-
-        .cardspan a:hover {
-            text-decoration: none;
-        }
-
-/*PERSONAL TAB*/
-#TabContent .form-horizontal {
-    padding-top: 20px;
-}
-
-/*NAVICON*/
-#naviconbar a {
+/*
+    Navigation bar ICON
+*/
+.navbar-right > ul > li > a {
     padding: 0 10px 0 0;
-    cursor: pointer;
 }
 
-    #naviconbar a img {
+    .navbar-right > ul > li > a > img {
         width: 50px;
         height: 50px;
     }
 
-/*NAVICON END*/
+@media (max-width: 767px) {
+    .navbar-right {
+        margin-top: -60px;
+        margin-bottom: 60px;
+    }
 
-/*MENU LIST*/
+        .navbar-right ul.navbar-nav {
+            margin: 0;
+            float: right;
+        }
+}
+/*
+    Navigation integrated frame
+*/
+
+#talkframe, #userframe {
+    top: 45px;
+    margin-left: -300px;
+    width: 276px;
+    left: 100%;
+    position: fixed;
+}
+
+    #userframe .popover-content>img {
+        float:left;
+        width:80px;
+        margin-top:3px;
+    }
+
+    #userframe .popover-content>div {
+        float:left;
+        width:130px;
+        margin: -10px 15px 20px;
+    }
+        #userframe .popover-content > div h4 {
+            margin-bottom:0;
+        }
+
+@media (max-width: 767px) {
+
+    #userframe, #talkframe {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        margin-top: -98px;
+        margin-left: -138px;
+    }
+}
+/*
+    Talk frame
+*/
+#talkframe hr {
+    margin: 0;
+}
+
+#talkframe .popover-content {
+    min-height: 40px;
+    margin-left: -5px;
+}
+#talk .talk-card,
+#talkframe .talk-card {
+    background-color: #EEE;
+    margin-bottom: 10px;
+    overflow:hidden;
+}
+
+    #talk .talk-card > div:first-child {
+        width: 80px;
+        float: left;
+    }
+    #talkframe .talk-card > div:first-child {
+        width: 50px;
+        float: left;
+    }
+
+        #talk .talk-card > div:first-child > img{
+            width: 80px;
+        }
+        #talkframe .talk-card > div:first-child > img {
+            width: 50px;
+        }
+    
+           
+    #talk .talk-card > div:nth-child(2),
+    #talkframe .talk-card > div:nth-child(2) {
+        float: left;
+        width: 195px;
+        border-left: solid 1px #DDD;
+        background-color: #FAFAFA;
+        padding: 5px;
+    }
+    #talk .talk-card > div:nth-child(2) {
+        width: 100%;
+        margin-right:-80px;
+    }
+        #talk .talk-card > div:nth-child(2) p.text-right,
+        #talkframe .talk-card > div:nth-child(2) p.text-right {
+            margin: 0;
+        }
+
+            #talkframe .talk-card > div:nth-child(2) p.text-right span {
+                cursor: pointer;
+            }
+
+/*
+    Global fix
+*/
+.page-header button {
+    margin-top: -40px;
+}
+
+/*
+    Global list style
+*/
 .bs-sidebar .nav > li > a {
     display: block;
     color: #716b7a;
@@ -84,202 +169,45 @@ a {
         padding-left: 30px;
         font-size: 90%;
     }
-/*MENU LIST END*/
 
-/*HOMEWORKSPAN & FILESPAN*/
-#homeworkspan, #filespan {
-    overflow-y: auto;
-    height: 220px;
-}
-/*HOMEWORKSPAN & FILESPAN END*/
-
-/*FRAME*/
-#talkframe, #userframe {
-    top: 45px;
-    margin-left: -300px;
-    width: 276px;
-    left: 100%;
-    position: fixed;
-}
-/*FRAME END*/
-
-/*SCROLLUP*/
-#scrollUp {
-    bottom: 20px;
-    right: 20px;
-    height: 38px;
-    width: 38px;
-    background: url("../img/top.png") no-repeat;
+/*
+    Default page
+*/
+#default .jumbotron {
+    background-image: url(../img/welcome.jpg);
+    background-size: cover;
+    margin-left: -15px;
+    margin-right: -15px;
 }
 
-/*PERSONAL CARD*/
-#userinfobox .btn {
-    height: 102px;
-    padding: 40px 11px 10px;
-}
-
-#userinfobox {
-    margin: 10px;
-}
-
-#userheadbox > img {
-    margin-top: -30px;
-    width: 80px !important;
-    height: 80px !important;
-}
-/*PERSONAL AVATAR*/
-#preview-pane {
-    display:block;
-    top: 10px;
-    padding: 6px;
-    border: 1px rgba(0,0,0,.4) solid;
-    background-color: white;
-    border-radius: 6px;
-    box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
-    float: right;
-    margin-right: -200px;
-}
-
-    #preview-pane .preview-container {
-        width: 150px;
-        height: 150px;
-        overflow: hidden;
-    }
-
-/*IO MODAL BUTTON*/
-#iomodalbt {
-    margin-top: -40px;
-}
-
-@media (max-width: 992px) {
-    #homeworkspan, #filespan {
-        overflow-y: visible;
-        height: auto;
-    }
-}
-
-/*GALLERY*/
-#galleryul .mix {
+/*
+    Gallery page
+*/
+#gallery > ul .mix {
     display: none;
 }
 
-    #galleryul .mix a {
+    #gallery > ul .mix a {
         text-decoration: none;
         text-align: center;
     }
 
-/*FILE*/
-#filethumb {
-    width: 800px;
+/*
+    Personal page
+*/
+#personal .form-horizontal {
+    padding-top: 20px;
 }
 
-/*TALK*/
-
-.talkoptitlerd {
-    color: #7A7A7A;
-    margin-top: 8px;
-    font-size: 14px;
-    margin-right: 8px;
-    margin-bottom: 8px;
-    float: right;
+#personal #avatar .col-md-4 .btn-primary {
+    width: 150px;
 }
 
-    .talkoptitlerd a {
-        cursor: pointer;
-    }
-
-.talkcard {
-    width: 260px;
-    box-shadow: 0 0 3px #CCC;
-    background-color: #F9F9F9;
-    margin-top: 35px;
-    margin-bottom: 5px;
-}
-
-.talkop {
-    border-bottom-width: 1px;
-    border-bottom-style: solid;
-    border-bottom-color: #E3E3E3;
-    height: 35px;
-}
-
-.talkoptitle {
-    color: #7A7A7A;
-    margin-top: 8px;
-    font-size: 14px;
-    margin-left: 8px;
-    margin-bottom: 8px;
-    float: left;
-}
-
-.talkcardhead {
-    background-color: #FFF;
-    height: 40px;
-    width: 40px;
-    float: left;
-    margin-top: -25px;
-    margin-right: 5px;
-    margin-bottom: 5px;
-    margin-left: 5px;
-    box-shadow: 0 0 3px #ccc;
-}
-
-.talkcardinfo {
-    float: left;
-    width: 210px;
-    margin-top: -33px;
-    margin-left: -5px;
-}
-
-.talkcardtime {
-    font-size: 10px;
-    color: #7A7A7A;
-}
-
-.talkcardcontent {
-    clear: both;
-    text-indent: 2em;
-    padding: 10px;
-    color: #313131;
-    background-repeat: no-repeat;
-    font-size: 13px;
-}
-
-#talkcontent {
-    min-height: 40px;
-    margin-left: -5px;
-}
-
-
-@media (max-width: 766px) {
-    #Carousel {
-        display: none;
-    }
-
-    #filethumb {
-        width: auto;
-        margin-left: 0;
-    }
-
-    #naviconbar {
-        margin-top: -60px;
-        margin-bottom: 60px;
-    }
-
-    #naviconbar span {
-        display:none;
-    }
-
-    #userframe, #talkframe {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        margin-top: -98px;
-        margin-left: -138px;
-    }
-
-    .navbar-right .navbar-nav {
-        margin: 0;
-        float: right;
-    }
+#personal #avatar .col-md-4 .preview-container {
+    margin: 15px auto;
+    width: 150px;
+    height: 150px;
+    overflow: hidden;
+    box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
+    border: 1px rgba(0,0,0,.4) solid;
 }
