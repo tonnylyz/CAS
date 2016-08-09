@@ -15,11 +15,11 @@
             </button>
             <ul class="dropdown-menu" role="menu">
                 <li class="filter" data-filter="all"><a>全部</a></li>
-                <%=onPage[1]%>
+                <%=OnPage[1]%>
             </ul>
         </div>
 		<ul class="just row">
-			<%=onPage[0]%>
+			<%=OnPage[0]%>
 		</ul>
     </div>
     

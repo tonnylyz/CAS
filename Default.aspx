@@ -16,13 +16,13 @@
             <div class="col-sm-4">
                 <h2>公告 <small><a href="Bulletin.aspx">更多</a></small></h2>
                 <div class="bs-sidebar">
-                	<%=onPage[0]%>
+                	<%=OnPage[0]%>
                 </div>
             </div>
             <div class="col-sm-4">
                 <h2>图库 <small><a href="Gallery.aspx">更多</a></small></h2>
                 <div class="bs-sidebar">
-                    <img class="img-responsive img-thumbnail" src="Photo/<%=onPage[1] %>_thumb.jpg">
+                    <img class="img-responsive img-thumbnail" src="Photo/<%=OnPage[1] %>_thumb.jpg">
                 </div>
             </div>
             <div class="col-sm-4">
@@ -35,7 +35,7 @@
                         </tr>
                     </thead>
                     <tbody id="birthday">
-                        <%=onPage[2] %>
+                        <%=OnPage[2] %>
                     </tbody>
                 </table>
             </div>

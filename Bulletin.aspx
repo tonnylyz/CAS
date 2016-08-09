@@ -13,14 +13,14 @@
             <div class="col-sm-3">
 				<div class="bs-sidebar">
                     <ul class="nav bs-sidenav" id="list">
-					    <%=onPage[0]%>
+					    <%=OnPage[0]%>
                     </ul>
 				</div>
             </div>
             <div class="col-sm-9">
                 <div id="notice">
-                    <%if (onPage[1] != null)
-                            Response.Write("<div class=\"page-header\"><h1>" + onPage[1] + " <small>" + onPage[3] + "</small></h1></div><div>" + onPage[2] + "</div>");
+                    <%if (OnPage[1] != null)
+                            Response.Write("<div class=\"page-header\"><h1>" + OnPage[1] + " <small>" + OnPage[3] + "</small></h1></div><div>" + OnPage[2] + "</div>");
                     %>
                 </div>
                 <div class="well<%if (Request["ID"] != null){ %> hidden<%}%>" id="default" >
