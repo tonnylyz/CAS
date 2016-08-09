@@ -68,7 +68,7 @@ function talkInit() {
             data: { content: $("#talkframe form input[type=\"text\"]").val() },
             dataType: "json",
             success: function (result) {
-                if (result.flag == "success") {
+                if (result.flag == 0) {
                     Messenger().post("提交成功。");
                 }
                 else {
@@ -92,7 +92,7 @@ function talkGet() {
         url: "ajax.ashx?cat=talk&do=get",
         dataType: "json",
         success: function (result) {
-            if (result.flag == "success") {
+            if (result.flag == 0) {
                 $("#talkframe .popover-content").css("display", "none");
                 if (result.data.length != 0)
                     for (var i = 0; i < result.data.length; i++)

@@ -11,7 +11,7 @@ public partial class Bulletin : System.Web.UI.Page
         CAS.SqlIntegrate si = new CAS.SqlIntegrate(CAS.Utility.connStr);
         if (Request["ID"] != null)
         {
-            DataRow dr = si.Reader("SELECT * FROM CAS_Notice WHERE [GUID] = '" + Guid.Parse(Request["ID"]).ToString().ToUpper() + "'");
+            var dr = si.Reader("SELECT * FROM CAS_Notice WHERE [GUID] = '" + Guid.Parse(Request["ID"]).ToString().ToUpper() + "'");
             OnPage[1] = dr["title"].ToString();
             OnPage[2] = dr["content"].ToString();
             OnPage[3] = dr["date"].ToString();

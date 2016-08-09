@@ -26,7 +26,7 @@ namespace CAS
             SqlIntegrate si = new SqlIntegrate(Utility.connStr);
             si.InitParameter(1);
             si.AddParameter("@username", SqlIntegrate.DataType.VarChar, username, 50);
-            DataRow dr = si.Reader("SELECT * FROM CAS_User WHERE username = @username");
+            var dr = si.Reader("SELECT * FROM CAS_User WHERE username = @username");
             ID = Convert.ToInt32(dr["ID"]);
             UUID = dr["UUID"].ToString();
             password = dr["pwd"].ToString();

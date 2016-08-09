@@ -21,7 +21,7 @@
             data: { username: $("#username").val(), password: $("#password").val() },
             dataType: "json",
             success: function (result) {
-                if (result.flag == "success") {
+                if (result.flag == 0) {
                     Messenger().post("登录成功。");
                     window.location.href = "Default.aspx";
                 }
@@ -57,7 +57,7 @@
             data: { realname: $("#reg-realname").val(), SN: $("#reg-SN").val(), username: $("#reg-username").val(), password: $("#reg-pwd").val(), birthday: $("#reg-birthday").val(), QQ: $("#reg-qq").val(), phone: $("#reg-phone").val(), mail: $("#reg-mail").val(), intro: $("#reg-intro").val() },
             dataType: "json",
             success: function (result) {
-                if (result.flag == "success") {
+                if (result.flag == 0) {
                     Messenger().post({
                         message: "注册成功。",
                         showCloseButton: true

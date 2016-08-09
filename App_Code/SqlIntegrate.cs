@@ -1,169 +1,212 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
+using Newtonsoft.Json.Linq;
+
 namespace CAS
 {
+
     /// <summary>
-    /// SqlIntegrate is a basic SQL Database operating module.
+    ///     SqlIntegrate 数据库交互
     /// </summary>
-    public class SqlIntegrate
+    public class SqlIntegrate : IDisposable
     {
-        private string sqlConnStr;
-        private SqlConnection conn;
-        private SqlCommand cmd;
-        private SqlDataReader dr;
-        private SqlDataAdapter da;
-        private DataSet ds;
-        private int paraindex = 0;
-        private SqlParameter[] paralist;
+        /// <summary>
+        ///     SQL data type
+        /// </summary>
         public enum DataType
         {
             Date = SqlDbType.Date,
             VarChar = SqlDbType.VarChar,
             NVarChar = SqlDbType.NVarChar,
             Text = SqlDbType.Text,
-            Int = SqlDbType.Int,
-        };
+            Int = SqlDbType.Int
+        }
+
+        private readonly string _sqlConnStr;
+        private SqlCommand _cmd;
+        private SqlConnection _conn;
+        private SqlDataAdapter _da;
+        private SqlDataReader _dr;
+        private DataSet _ds;
+        private int _paraindex;
+        private SqlParameter[] _paralist;
+
+        /// <summary>
+        ///     SqlIntegrate constructor
+        /// </summary>
+        /// <param name="connstr">Connection string</param>
         public SqlIntegrate(string connstr)
         {
-            sqlConnStr = connstr;
+            _sqlConnStr = connstr;
         }
+
+        public void Dispose()
+        {
+            _conn.Dispose();
+            _cmd.Dispose();
+            _dr.Dispose();
+            _da.Dispose();
+        }
+
+        /// <summary>
+        ///     Initialize parameter array
+        /// </summary>
+        /// <param name="paracount">Number of parameter(s)</param>
         public void InitParameter(int paracount)
         {
-            paraindex = 0;
-            paralist = new SqlParameter[paracount];
+            _paraindex = 0;
+            _paralist = new SqlParameter[paracount];
         }
+
+        /// <summary>
+        ///     Add a parameter
+        /// </summary>
+        /// <param name="key">Parameter name (with at '@')</param>
+        /// <param name="datatype">SQL data type</param>
+        /// <param name="value">Parameter value</param>
+        /// <param name="length">Max length (if necessary)</param>
         public void AddParameter(string key, DataType datatype, object value, int length = 0)
         {
-            SqlParameter para = ((int)datatype != (int)SqlDbType.Text || length == 0) ? new SqlParameter(key, (SqlDbType)datatype, length) : new SqlParameter(key, (SqlDbType)datatype);
+            var para = (int)datatype != (int)SqlDbType.Text || length == 0
+                ? new SqlParameter(key, (SqlDbType)datatype, length)
+                : new SqlParameter(key, (SqlDbType)datatype);
             para.Value = value;
-            paralist[paraindex] = para;
-            paraindex++;
+            _paralist[_paraindex] = para;
+            _paraindex++;
         }
+
+        /// <summary>
+        ///     Execute a SQL query with no return
+        /// </summary>
+        /// <param name="command">SQL query command</param>
         public void Execute(string command)
         {
-            conn = new SqlConnection(sqlConnStr);
-            cmd = new SqlCommand(command, conn);
-            if (paraindex != 0)
-                for (int i = 0; i < paralist.Length; i++)
-                    cmd.Parameters.Add(paralist[i]);
-            conn.Open();
-            cmd.ExecuteNonQuery();
-            conn.Close();
+            _conn = new SqlConnection(_sqlConnStr);
+            _cmd = new SqlCommand(command, _conn);
+            if (_paraindex != 0)
+                foreach (var para in _paralist)
+                    _cmd.Parameters.Add(para);
+            _conn.Open();
+            _cmd.ExecuteNonQuery();
+            _conn.Close();
         }
+
+        /// <summary>
+        ///     Execute a SQL query and return a single value
+        /// </summary>
+        /// <param name="command">SQL query command</param>
+        /// <returns>Query result (a single value)</returns>
         public object Query(string command)
         {
-            object back = null;
-            conn = new SqlConnection(sqlConnStr);
-            cmd = new SqlCommand(command, conn);
-            if (paraindex != 0)
-                for (int i = 0; i < paralist.Length; i++)
-                    cmd.Parameters.Add(paralist[i]);
-            conn.Open();
-            back = cmd.ExecuteScalar();
-            conn.Close();
+            _conn = new SqlConnection(_sqlConnStr);
+            _cmd = new SqlCommand(command, _conn);
+            if (_paraindex != 0)
+                foreach (var para in _paralist)
+                    _cmd.Parameters.Add(para);
+            _conn.Open();
+            var back = _cmd.ExecuteScalar();
+            _conn.Close();
             if (!Convert.IsDBNull(back) && back != null)
                 return back;
-            else
-                return "";
+            return "";
         }
-        public DataRow Reader(string command)
+
+        /// <summary>
+        ///     Execute a SQL query and return a row of data
+        /// </summary>
+        /// <param name="command">SQL query command</param>
+        /// <returns>A row of data</returns>
+        public Dictionary<string, object> Reader(string command)
         {
-            conn = new SqlConnection(sqlConnStr);
-            cmd = new SqlCommand(command, conn);
-            if (paraindex != 0)
-                for (int i = 0; i < paralist.Length; i++)
-                    cmd.Parameters.Add(paralist[i]);
-            conn.Open();
-            dr = cmd.ExecuteReader();
-            if (!dr.HasRows)
+            _conn = new SqlConnection(_sqlConnStr);
+            _cmd = new SqlCommand(command, _conn);
+            if (_paraindex != 0)
+                foreach (var para in _paralist)
+                    _cmd.Parameters.Add(para);
+            _conn.Open();
+            _dr = _cmd.ExecuteReader();
+            if (!_dr.HasRows)
                 throw new DataException();
-            DataRow datarow = GetDataRow(dr);
-            dr.Close();
-            conn.Close();
-            return datarow;
+            var cols = new List<string>();
+            for (var i = 0; i < _dr.FieldCount; i++)
+                cols.Add(_dr.GetName(i));
+            Dictionary<string, object> result;
+            if (_dr.Read())
+                result = cols.ToDictionary(col => col, col => _dr[col]);
+            else
+                throw new DataException();
+            _dr.Close();
+            _conn.Close();
+            return result;
         }
-        private static DataRow GetDataRow(SqlDataReader reader)
-        {
-            DataTable schemaTable = reader.GetSchemaTable();
-            DataTable data = new DataTable();
-            foreach (DataRow row in schemaTable.Rows)
-            {
-                string colName = row.Field<string>("ColumnName");
-                Type t = row.Field<Type>("DataType");
-                data.Columns.Add(colName, t);
-            }
-            while (reader.Read())
-            {
-                var newRow = data.Rows.Add();
-                foreach (DataColumn col in data.Columns)
-                {
-                    newRow[col.ColumnName] = reader[col.ColumnName];
-                }
-            }
-            return data.Rows[0];
-        }
+
+        /// <summary>
+        ///     Execute a SQL query and return a table of data
+        /// </summary>
+        /// <param name="command">SQL query command</param>
+        /// <returns>A table of data</returns>
         public DataTable Adapter(string command)
         {
-            da = new SqlDataAdapter(command, sqlConnStr);
-            if (paraindex != 0)
-                for (int i = 0; i < paralist.Length; i++)
-                    da.SelectCommand.Parameters.Add(paralist[i]);
-            ds = new DataSet();
-            da.Fill(ds);
-            DataTable dt = ds.Tables[0];
+            _da = new SqlDataAdapter(command, _sqlConnStr);
+            if (_paraindex != 0)
+                foreach (var para in _paralist)
+                    _da.SelectCommand.Parameters.Add(para);
+            _ds = new DataSet();
+            _da.Fill(_ds);
+            var dt = _ds.Tables[0];
             return dt;
         }
-        public string QueryJSON(string command)
+
+        /// <summary>
+        ///     Execute a SQL query and return a row of data in JSON
+        /// </summary>
+        /// <param name="command">SQL query command</param>
+        /// <returns>A row of data in JSON</returns>
+        public JObject QueryJson(string command)
         {
-            string back = "{";
-            conn = new SqlConnection(sqlConnStr);
-            cmd = new SqlCommand(command, conn);
-            if (paraindex != 0)
-                for (int i = 0; i < paralist.Length; i++)
-                    cmd.Parameters.Add(paralist[i]);
-            conn.Open();
-            dr = cmd.ExecuteReader();
-            if (!dr.HasRows)
+            _conn = new SqlConnection(_sqlConnStr);
+            _cmd = new SqlCommand(command, _conn);
+            if (_paraindex != 0)
+                foreach (var para in _paralist)
+                    _cmd.Parameters.Add(para);
+            _conn.Open();
+            _dr = _cmd.ExecuteReader();
+            if (!_dr.HasRows)
                 throw new DataException();
-            while (dr.Read())
-                for (int i = 0; i < dr.FieldCount; i++)
-                    if (dr[i].GetType().Equals(new byte().GetType()) || dr[i].GetType().Equals(new int().GetType()) || dr[i].GetType().Equals(new float().GetType()) || dr[i].GetType().Equals(new double().GetType()))
-                        back += "\"" + dr.GetName(i) + "\":" + dr[i].ToString() + ",";
-                    else if (dr[i].GetType().Equals(new DateTime().GetType()))
-                        back += "\"" + dr.GetName(i) + "\":\"" + Convert.ToDateTime(dr[i]).ToString("yyyy-MM-dd HH:mm:ss").Replace(" 00:00:00", "") + "\",";
-                    else
-                        back += "\"" + dr.GetName(i) + "\":\"" + Utility.String2JSON(dr[i].ToString()) + "\",";
-            back += "}";
-            dr.Close();
-            conn.Close();
-            return back.Replace(",}", "}");
+            var cols = new List<string>();
+            for (var i = 0; i < _dr.FieldCount; i++)
+                cols.Add(_dr.GetName(i));
+            if (_dr.Read())
+                return (JObject)JToken.FromObject(cols.ToDictionary(col => col, col => _dr[col]));
+            throw new DataException();
         }
-        public string AdapterJSON(string command)
+
+        /// <summary>
+        ///     Execute a SQL query and return a table of data in JSON
+        /// </summary>
+        /// <param name="command">SQL query command</param>
+        /// <returns>A table of data in JSON</returns>
+        public JArray AdapterJson(string command)
         {
-            string back = "[";
-            da = new SqlDataAdapter(command, sqlConnStr);
-            if (paraindex != 0)
-                for (int i = 0; i < paralist.Length; i++)
-                    da.SelectCommand.Parameters.Add(paralist[i]);
-            ds = new DataSet();
-            da.Fill(ds);
-            for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+            _da = new SqlDataAdapter(command, _sqlConnStr);
+            if (_paraindex != 0)
+                foreach (var para in _paralist)
+                    _da.SelectCommand.Parameters.Add(para);
+            _ds = new DataSet();
+            _da.Fill(_ds);
+            var a = new JArray();
+            foreach (DataRow dr in _ds.Tables[0].Rows)
             {
-                back += "{";
-                for (int j = 0; j < ds.Tables[0].Columns.Count; j++)
-                {
-                    if (ds.Tables[0].Rows[i][j].GetType().Equals(new byte().GetType()) || ds.Tables[0].Rows[i][j].GetType().Equals(new int().GetType()) || ds.Tables[0].Rows[i][j].GetType().Equals(new float().GetType()) || ds.Tables[0].Rows[i][j].GetType().Equals(new double().GetType()))
-                        back += "\"" + ds.Tables[0].Columns[j].ColumnName + "\":" + ds.Tables[0].Rows[i][j].ToString() + ",";
-                    else if (ds.Tables[0].Rows[i][j].GetType().Equals(new DateTime().GetType()))
-                        back += "\"" + ds.Tables[0].Columns[j].ColumnName + "\":\"" + Convert.ToDateTime(ds.Tables[0].Rows[i][j].ToString()).ToString("yyyy-MM-dd HH:mm:ss").Replace(" 00:00:00", "") + "\",";
-                    else
-                        back += "\"" + ds.Tables[0].Columns[j].ColumnName + "\":\"" + Utility.String2JSON(ds.Tables[0].Rows[i][j].ToString()) + "\",";
-                }
-                back += "},";
+                var o = new JObject();
+                foreach (DataColumn col in _ds.Tables[0].Columns)
+                    o.Add(col.ColumnName.Trim(), JToken.FromObject(dr[col]));
+                a.Add(o);
             }
-            back += "]";
-            return back.Replace(",}", "}").Replace(",]", "]");
+            return a;
         }
     }
+
 }
