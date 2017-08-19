@@ -1,0 +1,37 @@
+﻿@page
+@using System.Data
+@model cas.Pages.MainPageModel
+<div class="container">
+    <div class="page-header">
+        <h1>班级 <small>公告/通知</small>
+        </h1>
+    </div>
+</div>
+<div class="container" style="min-height: 450px;">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="bs-sidebar">
+                <ul class="nav bs-sidenav" id="bultlist">
+                    @{
+                        var util = new Utility();
+                        var dt = util.Adapter("SELECT ID, title FROM CAS_Notice ORDER BY ID DESC");
+                        var style = "";
+                    }
+                    @foreach (DataRow b in dt.Rows)
+                    {
+                        <li data-id="@b["ID"]"><a onclick="bulletinShowNotice(this);">@b["title"]</a></li>
+                    }
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-9" id="bulletinboard">
+            <div id="ntb">
+            </div>
+            
+            <div class="well" id="defaultb">
+                <h2>公告</h2>
+                <p>欲知班级大事事宜，且看公告一览无余。</p>
+            </div>
+        </div>
+    </div>
+</div>

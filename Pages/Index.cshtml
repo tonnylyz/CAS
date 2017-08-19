@@ -1,0 +1,36 @@
+﻿@page
+@model cas.Pages.MainPageModel
+<div class="container">
+    <div class="jumbotron">
+        <h1>CAS!</h1>
+        <p>基于ASP.NET Core构建的全新CAS</p>
+        <p><a class="btn btn-primary btn-lg" href="https://docs.microsoft.com/zh-cn/aspnet/core/" role="button">Learn more</a></p>
+    </div>
+</div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h2>公告 <small><a asp-page="/Bulletin">更多</a></small></h2>
+                <p class="bg-primary" style="padding:15px;">CAS纪念版上线。祝同学们在新学期里马到成功！</p>
+            </div>
+            <div class="col-md-4">
+                <h2>相册 <small><a asp-page="/Gallery">更多</a></small></h2>
+                <div>
+                    <img class="img-responsive img-thumbnail" src="photo/5B20180E-34EF-43FD-B205-3ECC619B4AD5_thumb.jpg"/>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <h2>生日 <small><a asp-page="/Calendar">更多</a></small></h2>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>姓名</th>
+                            <th>生日</th>
+                        </tr>
+                    </thead>
+                    <tbody id="birthday">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>

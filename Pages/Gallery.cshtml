@@ -1,0 +1,49 @@
+﻿@page
+@using System
+@using System.Data
+@model cas.Pages.MainPageModel
+<div class="container">
+    <div class="page-header">
+        <h1>图库 <small>班级相册</small></h1>
+    </div>
+</div>
+<div class="container">
+    <div class="btn-group pull-left" style="margin-top: -69px;margin-left: 190px;">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+            集 <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            <li class="filter" data-filter="all"><a>全部</a></li>
+            @{
+                var dt = new Utility().Adapter("SELECT DISTINCT [folder] FROM CAS_Photo");
+                foreach (DataRow dr in dt.Rows)
+                {
+                    if (!System.Convert.IsDBNull(dr["folder"]))
+                    {
+                        <li class="filter" data-filter="@("." + dr["folder"])">
+                            <a>@dr["folder"]</a>
+                        </li>
+                    }
+                }
+            }
+        </ul>
+    </div>
+</div>
+<div class="container">
+    <ul id="galleryul" class="just row">
+        @{
+            dt = new Utility().Adapter("SELECT GUID, folder, title FROM CAS_Photo ORDER BY ID DESC");
+            foreach (DataRow dr in dt.Rows)
+            {
+                <li class="@(Convert.IsDBNull(dr["folder"]) ? "mix col-sm-3" : "mix col-sm-3 " + dr["folder"])" data-name="@dr["title"]">
+                    <a class="thumbnail swipebox" href="@("photo/" + dr["GUID"] + ".jpg")" title="@dr["title"]">
+                        <img src="@("photo/" + dr["GUID"] + "_thumb.jpg")">
+                        <div class="caption">
+                            <h4>@dr["title"]</h4>
+                        </div>
+                    </a>
+                </li>
+            }
+        }
+    </ul>
+</div>

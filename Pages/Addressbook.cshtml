@@ -1,0 +1,63 @@
+﻿@page
+@model cas.Pages.MainPageModel
+<div class="container">
+    <div class="page-header">
+        <h1>
+            班级 <small>通讯录</small>
+        </h1>
+    </div>
+</div>
+<div class="container">
+    <div class="row" id="cardcont">
+    </div>
+</div>
+
+<div id="cinfo" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="crealname"></h4>
+            </div>
+            <div class="modal-body">
+
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="cphone">手机</label>
+                        <div class="col-sm-6">
+                            <input class="form-control" type="text" id="cphone">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="cmail">邮箱</label>
+                        <div class="col-sm-6">
+                            <input class="form-control" type="text" id="cmail">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="cqq">QQ</label>
+                        <div class="col-sm-6">
+                            <input class="form-control" type="text" id="cqq">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="cusername">用户名</label>
+                        <div class="col-sm-6">
+                            <input class="form-control" type="text" id="cusername">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="cbirth">生日</label>
+                        <div class="col-sm-6">
+                            <input class="form-control" type="text" id="cbirth">
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>

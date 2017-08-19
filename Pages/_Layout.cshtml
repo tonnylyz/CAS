@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head id="head">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="深圳中学高二（13）班 班级网站 CAS">
+    <meta name="keywords" content="高二（13）班, 班级网站, 十三班, CAS, 深圳中学, 荣誉体系">
+    <title>十三班 - CAS - 纪念版</title>
+    <link href="~/css/basic.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="~/js/basic.js"></script>
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" asp-page="/Index">CAS</a>
+            </div>
+            <div class="navbar-right" id="naviconbar">
+                <ul id="userbtn" class="nav navbar-nav">
+                    <li>
+                        
+                        @if (ViewData["login"] != null)
+                        {
+                            <a onclick="frameLoad('user')">
+                                <img src="@ViewData["avatar"]"/><span>@ViewData["username"]</span></a>
+                        }
+                        else
+                        {
+                            <a asp-page="/Login">
+                                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEwAAABMCAYAAADHl1ErAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAS0SURBVHhe7ZpPaBRXHMezu03WjWT1YARBUzEtSsEQo1b0EAJFaBFEhPTkpVQvgh4KgicJ8SBeghcvoiCIFHNS1FJKYeOppcfqlkp7aEm1aSIbs0n2T/5s/P5mvtns7G6a7Mxkdtb5feDx/syb37zfd9+bee/ta1IURVEURVEURVEURVEUBywtLW3N5XJ7EEdZpJQDcboR7hUKhX8RF0H+T0RXU6nUFlZVFhcXByFMwZSoOrg8ms/n9/OW4AKxblGTNYFo04i6eWvwgPNfG0rUAET7e2xsbDNNBAdxGs6PU4eaQK+8QjPBAX73m+7XDoRO0owvCDPeaI4yrplQKPQJdPPNlMMrwXYytkU2m93OZN3xSrA0Y1vEYrEpJuuOJ4LhPfQbkzWD4TiJYelIcDfxRLCFhYXvmKwZiPUDk8ECveyp8dmrkbm5uU9pIljA990QzbJ2XAvMwYZ4ezBBbzm0XtEg1oNEIvEBbw0u0GI3xPjWlKUqk7h+kdV9R4ix5+RyuY+i0ejnSHYhxNDz/gmHwzKrf4IX/VupoyjBw5MhmUwmWzo7O3diqMVYtG7y+fx/8Xj8DbPvN+l0ehte4NfxfnrDF7pdnmPye5pm308wheiBUK/osCtA/Nv1nmpEGLuK7Mc3NzcnMARd3WWAvZ6Ojo5d+Jo+HhkZWWJxYzMxMdGGzvC72Sc2BvS0AT6u8YE/90y3Ng4M9TlEjf8HCZw4bnjkDc/42MYFv/wvdMYT8OU8wUc3HtJ4+lEBh5BtcP8skxbkB+LjPcO1DUR8uaoumOHUHXzdfmLWFrDxJaKK9SXsHoZuh5n1BFdm+rOzsztaW1tfM1sEzryAU7IBKDuufUahPY4hyB8pw0ZuhYlsNnsQzx7Fs84hf9wsXgFiv4hEIoPM+gM09hJCBcvvGCSTZoltDLHh/I/MLw/zI1I+Pz/fi/yCeWUFlL3KZDK7pI6vQNsemU20UNyLR1pO5TjhpNjhBqQhDH6Ms7TdLsJIWSko8+/ZDDSs4hiALI14uer1GumnKbE1jInrTUnLoh75n40aJUCsAgQ9ZdzgN6anp7eznaVYvl7IT5nFtjlPU7LxuGd5PQnhbvC6BZRfMCr7EbTvpNnMFcqXLiy2Dex9Q1NFpAfxsgXpXWB8tYB17j6asIXjaQUaURx6y2CKMcKkiOX4XATsxZk0gM0ulN1n1gK+ykL7aqGlpcXRhoNjwdDwA0wWmZmZKf2n2+KsTcpFvwbnW5n2FDcmruUnc9JtbW3jTMtBkk1MOsEiOj4olxHV5Y8SR4JhaMQRLNvOyFvOUcRiMTd6mMVGNBp9jvfaV8xWIG1YLeAdlme1+sD9LzkwN4z3mcx9LLNx5HsQnFI+wzeAaEO8bgHl/prZrwbF+5hZA+T7DC+c8T3NWRgYGAjLNbNKBWdYrbGQpQl63kOE/z1qvgYJmqsA12SmL2tJCyiTpVMvqzUe8k83HJA15zM4U7HuqwbqjWN43cWc6wuaqQqqdiFkjJtKwP0pRHtZzRXqclQATsg0QRzpglMfIm7H9CSEdAZxCvm/EF5i6vAr4nUBUU+j/mfMlvJHJBK5wbSiKIqiKIqiKIqiKIqiKMpG0dT0DkC8vFjZ5WxwAAAAAElFTkSuQmCC"/><span>登录</span></a>
+                        }
+                    </li>
+                </ul>
+                
+                <div class="popover bottom" id="userframe">
+                    <h3 class="popover-title">用户操作
+                        <button type="button" class="close" onclick="frameHide()">&times;</button>
+                    </h3>
+                    <div class="popover-content" id="userinfobox">
+                        <div class="btn-group btn-group-lg">
+                            <a class="btn btn-default" id="userheadbox">
+                                <img src="@ViewData["avatar"]"/></a>
+                            <a asp-page="/Personal" class="btn btn-default">个人</a>
+                            <a class="btn btn-danger" id="logout" onclick="userLogout()">注销</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a asp-page="/Bulletin">公告</a></li>
+                    <li><a asp-page="/Earth">地图</a></li>
+                    <li><a asp-page="/Addressbook">通讯录</a></li>
+                    <li><a asp-page="/Calendar">日历</a></li>
+                    <li><a asp-page="/Gallery">图库</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+@RenderBody()
+
+    <div class="container">
+        <hr>
+        <footer>
+            <p>&copy; 2015 深圳中学 十三班 &middot; 纪念版</p>
+            <p>基于开源的 <a href="http://github.com/tonnylyz/CAS">CAS</a> 构建！</p>
+        </footer>
+    </div>
+</body>
+</html>
